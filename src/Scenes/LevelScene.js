@@ -1,6 +1,6 @@
 import 'phaser';
 import config from '../Config/config';
-
+import Button from '../Objects/Button';
 export default class LevelScene extends Phaser.Scene {
   constructor () {
     super('Level');
@@ -25,10 +25,10 @@ export default class LevelScene extends Phaser.Scene {
         
 
 
-        this.level1 = new Button(this, 200, config.height/2, 'blueButton1', 'blueButton2', 'level 1', 'level1');
+        this.level1 = new Button(this, 400, config.height/2, 'blueButton1', 'blueButton2', 'level 1', 'level1');
 
         // Controls
-        this.level2 = new Button(this, 200, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Level 2', 'level2');
+        this.level2 = new Button(this, 400, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Level 2', 'level2');
     
     
     
