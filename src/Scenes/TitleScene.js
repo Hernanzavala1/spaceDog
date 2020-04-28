@@ -1,29 +1,44 @@
 import 'phaser';
 import config from '../Config/config';
 import Button from '../Objects/Button';
+import HomeDog from '../Objects/HomeDog';
+import HomeDog2 from '../Objects/HomeDog2';
+
 
 export default class TitleScene extends Phaser.Scene {
   constructor () {
     super('Title');
   }
 
+  preload(){
+    this.load.image('sky', 'assets/sky.png');
+  }
+
   create () {
-    // Game
-    this.gameButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Play', 'Game');
+    //temp background image
+    this.add.image(400, 300, 'sky');
 
-    // Options
-    this.optionsButton = new Button(this, config.width/2, config.height/2, 'blueButton1', 'blueButton2', 'Options', 'Options');
+    // Start
+    this.gameButton = new Button(this, config.width-100, config.height/2, 'blueButton1', 'blueButton2', 'Play', 'Level');
 
-    // Credits
-    this.creditsButton = new Button(this, config.width/2, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Credits', 'Credits');
+    // Controls
+    this.optionsButton = new Button(this, config.width-100, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Options', 'Options');
+
+    // Help
+    this.creditsButton = new Button(this, config.width-100, config.height/2 + 200, 'blueButton1', 'blueButton2', 'Credits', 'Credits');
+
+    //Space Dog on the left
+
+    //Space Dog on Top
 
     this.model = this.sys.game.globals.model;
     if (this.model.musicOn === true && this.model.bgMusicPlaying === false) {
-      this.bgMusic = this.sound.add('bgMusic', { volume: 0.5, loop: true });
+      this.bgMusic = this.sound.add('bgMusic', { volume: 0.2, loop: true });
       this.bgMusic.play();
       this.model.bgMusicPlaying = true;
       this.sys.game.globals.bgMusic = this.bgMusic;
     }
+    
   }
 
   centerButton (gameObject, offset = 0) {
