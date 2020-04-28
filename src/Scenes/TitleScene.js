@@ -15,14 +15,6 @@ export default class TitleScene extends Phaser.Scene {
   }
 
   create () {
-<<<<<<< HEAD
-    // Game
-    this.gameButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Play', 'Game');
-    // lEVELs
-    this.levelsButton = new Button(this, config.width/2, config.height/2 - 100, 'blueButton1', 'blueButton2', 'Levels', 'Levels');
-    // Options
-    this.optionsButton = new Button(this, config.width/2, config.height/2, 'blueButton1', 'blueButton2', 'Options', 'Options');
-=======
     //temp background image
     this.add.image(400, 300, 'sky');
 
@@ -36,7 +28,6 @@ export default class TitleScene extends Phaser.Scene {
     this.creditsButton = new Button(this, config.width-100, config.height/2 + 200, 'blueButton1', 'blueButton2', 'Credits', 'Credits');
 
     //Space Dog on the left
->>>>>>> 9f4a32c972e422c830e66971e17f3e246ce5ab37
 
     //Space Dog on Top
 

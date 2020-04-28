@@ -23,6 +23,15 @@ export default class LevelScene extends Phaser.Scene {
         this.selectLeveltext = this.add.text(400, 150, 'Select Level', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', fontSize: '40px', fill: '#ec186c'});
         this.selectLeveltext.setOrigin(.5, 0);
         
+
+
+        this.level1 = new Button(this, 200, config.height/2, 'blueButton1', 'blueButton2', 'level 1', 'level1');
+
+        // Controls
+        this.level2 = new Button(this, 200, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Level 2', 'level2');
+    
+    
+    
     }
 
 };
