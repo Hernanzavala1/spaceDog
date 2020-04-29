@@ -39,7 +39,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.platforms.create(600, 570, 'ground');
     this.platforms.create(50, 389, 'ground');
     this.platforms.create(750, 300, 'ground');
-    this.platforms.setCollideWorldBounds(true);
+    //this.platforms.setCollideWorldBounds(true);
  
 
     this.player = this.physics.add.sprite(100, 450, 'woof');
