@@ -5,6 +5,8 @@ export default class Level2Scene extends Phaser.Scene {
     super('Level1');
     this.platforms;
     this.player;
+    this.cursors;
+
   }
 
   preload () {
@@ -25,13 +27,9 @@ export default class Level2Scene extends Phaser.Scene {
     this.platforms.create(750, 220, 'ground');
 
     this.player = this.physics.add.sprite(100, 450, 'woof');
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
-    this.player.body.setGravityY(800)
-    
-  
-
-
+    this.player.body.bounce.y =.5;
+    this.player.setCollideWorldBounds(false);
+    this.player.body.gravity.y = 800;
 
     this.physics.add.collider(this.player, this.platforms);
 
@@ -42,6 +40,9 @@ export default class Level2Scene extends Phaser.Scene {
         repeat: -1
     });
 
+
+ ;
+
    
 
     this.anims.create({
@@ -50,14 +51,6 @@ export default class Level2Scene extends Phaser.Scene {
         frameRate: 10,
         repeat: -1
     });
-    
-    diamonds = this.physics.add.group();
-    diamonds.enableBody = true
-   
-
-
-
-
 
 }
 
@@ -65,6 +58,32 @@ export default class Level2Scene extends Phaser.Scene {
    
 
   update(){
-   
+    this.cursors = this.input.keyboard.createCursorKeys();
+    if (this.cursors.left.isDown)
+    {
+        this.player.setVelocityX(-160);
+    
+        this.player.anims.play('left', true);
+    }
+    else if (this.cursors.right.isDown)
+    {
+        this.player.setVelocityX(160);
+    
+        this.player.anims.play('right', true);
+    }
+    else
+    {
+        this.player.setVelocityX(0);
+    
+        this.player.anims.play('turn');
+    }
+    
+    if (this.cursors.up.isDown && this.player.body.touching.down)
+    {
+        this.player.setVelocityY(-300);
+    }
+
+
+
   }
 };
