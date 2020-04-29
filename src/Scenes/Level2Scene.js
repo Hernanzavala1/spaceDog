@@ -1,4 +1,5 @@
 import 'phaser';
+import config from '../Config/config';
 
 export default class Level2Scene extends Phaser.Scene {
   constructor () {
@@ -11,7 +12,6 @@ export default class Level2Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
-    this.emitter;
   }
 
   preload () {
@@ -21,12 +21,15 @@ export default class Level2Scene extends Phaser.Scene {
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('wave', '../../assets/wave.jpg');
+    this.load.image('blue', 'assets/wave.jpg');
   }
 
   create () {
-    this.background = this.add.tileSprite(0,0,800, 600, 'sky');
-    this.background.setOrigin(0,0);
-   this.background.setScrollFactor(0);
+    this.add.image(400, 300, 'sky');
+    // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
+    // this.background.setOrigin(0, 0);
+    // this.background.setScrollFactor(0);
 
     this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
@@ -86,6 +89,11 @@ export default class Level2Scene extends Phaser.Scene {
     this.bombs = this.physics.add.group();
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
+    this.cameras.main.setBounds(0, 0, 1600, 600);
+    this.cameras.main.startFollow(this.player);
+
+    // this.background.tilePositionX = this.cameras.scrollX * .3;
   }
 
     // collectStar (player, star){
