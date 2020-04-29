@@ -11,6 +11,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
+    this.emitter;
   }
 
   preload () {
@@ -72,6 +73,16 @@ export default class Level2Scene extends Phaser.Scene {
     // });
     // this.physics.add.collider(stars, platforms);
     // this.physics.add.overlap(player, stars, collectStar, null, this);
+  
+    var particles = this.add.particles('bomb')
+
+    var emitter = particles.createEmitter({
+        speed: 100,
+        scale: { start: 1, end: 0 },
+        blendMode: 'ADD'
+    });
+
+
     this.bombs = this.physics.add.group();
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);

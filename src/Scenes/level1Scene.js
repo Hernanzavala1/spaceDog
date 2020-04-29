@@ -9,6 +9,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.player;
     this.cursors;
     this.background;
+    this.diamonds;
+    this.ground;
   }
 
   preload () {
@@ -29,16 +31,40 @@ export default class Level2Scene extends Phaser.Scene {
     //this.setCollideWorldBounds(true, 1920, 1920);
     this.scoreText = this.add.text(16, 16, 'Level 1', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(400, 600, 'ground').setScale(2).refreshBody();
-    this.platforms.create(600, 450, 'ground');
-    this.platforms.create(50, 200, 'ground');
-    this.platforms.create(750, 220, 'ground');
+  
+    this.platforms.create(700, 555, 'ground').setScale(2).refreshBody();
+    this.platforms.create(600, 570, 'ground');
+    this.platforms.create(50, 389, 'ground');
+    this.platforms.create(750, 300, 'ground');
+    
+
     this.player = this.physics.add.sprite(100, 450, 'woof');
-    this.player.body.bounce.y =.5;
+    this.player.body.bounce.y =.2;
     this.player.setCollideWorldBounds(false);
     this.player.body.gravity.y = 800;
     this.cameras.main.startFollow(this.player);
+
+    this.diamonds = this.physics.add.group({
+        key: 'diamond',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+    });
+
+    this.diamonds.children.iterate(function (child) {
+
+        //  Give each star a slightly different bounce
+        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+    });
+
+
+
+
+
+    
     this.physics.add.collider(this.player, this.platforms);
+   
+    this.physics.add.collider(this.diamonds, this.platforms);
 
     this.anims.create({
         key: 'left',
