@@ -27,13 +27,13 @@ export default class Level2Scene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
     this.platforms.create(600, 400, 'ground');
-    this.platforms.create(50, 250, 'ground');
-    this.platforms.create(750, 220, 'ground');
+    this.platforms.create(50, 389, 'ground');
+    this.platforms.create(750, 300, 'ground');
 
     this.player = this.physics.add.sprite(100, 450, 'dude');
-    this.player.setBounce(0.2);
+    this.player.body.bounce.y =.5;
     this.player.setCollideWorldBounds(false);
-    this.player.body.setGravityY(300)
+    this.player.body.gravity.y = 800;
 
     this.physics.add.collider(this.player, this.platforms);
 
