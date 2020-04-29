@@ -10,6 +10,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.score = 0;
     this.scoreText;
     this.bombs;
+    this.background;
   }
 
   preload () {
@@ -22,7 +23,10 @@ export default class Level2Scene extends Phaser.Scene {
   }
 
   create () {
-    this.add.image(400, 300, 'sky');
+    this.background = this.add.tileSprite(0,0,800, 600, 'sky');
+    this.background.setOrigin(0,0);
+   this.background.setScrollFactor(0);
+
     this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
@@ -36,7 +40,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.player.body.gravity.y = 800;
 
     this.physics.add.collider(this.player, this.platforms);
-
+    this.cameras.main.startFollow(this.player);
     this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
@@ -88,6 +92,7 @@ export default class Level2Scene extends Phaser.Scene {
     }
 
   update(){
+    this.background.tilePositionX= this.cameras.main.scrollX * .3;
     this.cursors = this.input.keyboard.createCursorKeys();
     if (this.cursors.left.isDown)
     {
