@@ -1,7 +1,7 @@
 import 'phaser';
 
 
-export default class Level2Scene extends Phaser.Scene {
+export default class level1Scene extends Phaser.Scene {
     
   constructor () {
     super('Level1');
