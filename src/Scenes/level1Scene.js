@@ -39,7 +39,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.platforms.create(600, 570, 'ground');
     this.platforms.create(50, 389, 'ground');
     this.platforms.create(750, 300, 'ground');
-    
+    this.platforms.setCollideWorldBounds(true);
+ 
 
     this.player = this.physics.add.sprite(100, 450, 'woof');
     this.createEnemy();
@@ -108,12 +109,20 @@ export default class Level2Scene extends Phaser.Scene {
 
     this.enemy.anims.play("dudeRight", true);
     this.enemy.setVelocityX(100);
+    //this.enemy.setCollideWorldBounds(true);
+    //this.setCollideWorldBounds(true);
 
-
+   }
+   
+   updateEnemy(){
+    if(this.enemy.xSpeed>0 && this.enemy.x>this.platforms.x+this.platforms.width/2 || this.enemy.xSpeed<0 && this.enemy.x<this.platforms.x-this.platforms.width/2){
+        this.enemy.xSpeed*=-1;
+    }	
    }
 
   update(){
      this.background.tilePositionX= this.cameras.main.scrollX * .3;
+     this.updateEnemy();
     this.cursors = this.input.keyboard.createCursorKeys();
     if (this.cursors.left.isDown)
     {
