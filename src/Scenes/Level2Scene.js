@@ -1,6 +1,5 @@
 import 'phaser';
 
-
 export default class Level2Scene extends Phaser.Scene {
   constructor () {
     super('Level2');
@@ -24,7 +23,7 @@ export default class Level2Scene extends Phaser.Scene {
 
   create () {
     this.add.image(400, 300, 'sky');
-    this.scoreText = this.add.text(16, 16, 'Level 1', { fontSize: '32px', fill: '#000' });
+    this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
     this.platforms.create(600, 400, 'ground');

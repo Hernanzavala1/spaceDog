@@ -1,7 +1,7 @@
 import 'phaser';
-export default class level1Scene extends Phaser.Scene {
+export default class Level1Scene extends Phaser.Scene {
     constructor () {
-      super('level1');
+      super('Level1');
     }
     preload () {
         // load images
