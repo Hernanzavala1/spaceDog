@@ -11,6 +11,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.background;
     this.diamonds;
     this.ground;
+    this.enemy;
   }
 
   preload () {
@@ -19,6 +20,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.load.image('ground', 'assets/platform.png');
     this.load.image('diamond', 'assets/diamond.png');
     this.load.spritesheet('woof', 'assets/woof.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+
   }
 
   create () {
@@ -31,19 +34,22 @@ export default class Level2Scene extends Phaser.Scene {
     //this.setCollideWorldBounds(true, 1920, 1920);
     this.scoreText = this.add.text(16, 16, 'Level 1', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
-  
-    this.platforms.create(700, 555, 'ground').setScale(2).refreshBody();
+   ///  300, 750
+    this.platforms.create(0,  900, 'ground').setScale(4).refreshBody();
     this.platforms.create(600, 570, 'ground');
     this.platforms.create(50, 389, 'ground');
     this.platforms.create(750, 300, 'ground');
     
 
     this.player = this.physics.add.sprite(100, 450, 'woof');
+    this.createEnemy();
     this.player.body.bounce.y =.2;
     this.player.setCollideWorldBounds(false);
     this.player.body.gravity.y = 800;
     this.cameras.main.startFollow(this.player);
 
+   
+    
     this.diamonds = this.physics.add.group({
         key: 'diamond',
         repeat: 11,
@@ -57,14 +63,12 @@ export default class Level2Scene extends Phaser.Scene {
 
     });
 
-
-
-
-
     
+     
     this.physics.add.collider(this.player, this.platforms);
-   
+  
     this.physics.add.collider(this.diamonds, this.platforms);
+
 
     this.anims.create({
         key: 'left',
@@ -85,10 +89,28 @@ export default class Level2Scene extends Phaser.Scene {
         repeat: -1
     });
 
+   
 }
 
    
-   
+   createEnemy (){
+    this.enemy = this.physics.add.sprite(100, 550, 'dude');
+    this.physics.add.collider(this.enemy, this.platforms);
+
+
+
+    this.anims.create({
+        key: 'dudeRight',
+        frames: this.anims.generateFrameNumbers('dude', {  start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    }); 
+
+    this.enemy.anims.play("dudeRight", true);
+    this.enemy.setVelocityX(100);
+
+
+   }
 
   update(){
      this.background.tilePositionX= this.cameras.main.scrollX * .3;
