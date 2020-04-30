@@ -155,7 +155,7 @@ export default class Level1Scene extends Phaser.Scene {
     this.physics.add.collider(this.portal, this.platforms);
     this.portal.anims.play('Portal');
     this.physics.add.overlap(this.player, this.portal, function(){
-        if (!finished) {
+        if (!this.finished) {
             this.player.anims.play('dying');
         }
         this.finished = true;
