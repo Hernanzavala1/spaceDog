@@ -158,12 +158,10 @@ export default class Level1Scene extends Phaser.Scene {
         if (!this.finished) {
             this.player.anims.play('dying');
             setTimeout(()=>{
-             var won =   this.add.text(6000, 200, 'You Won!', {fontSize: '56px', fill: '#6d206e'});
+                var won = this.add.text(6000, 200, 'You Won!', {fontSize: '56px', fill: '#ffff00'});
                 won.setOrigin(.5);
                 this.physics.pause();
-            },100);
-            
-            
+            }, 300);
         }
         this.finished = true;
     }.bind(this));
