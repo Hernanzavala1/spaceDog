@@ -30,7 +30,7 @@ export default class LevelScene extends Phaser.Scene {
         // this.add(this.text);
         
         this.level1 = new Button(this, 400, config.height/2, 'level1', 'level1 h', '', 'Level1');
-        this.level2 = new Button(this, 400, config.height/2 + 100, 'level2', 'level2 h', '', 'Level2');
+        // this.level2 = new Button(this, 400, config.height/2 + 100, 'level2', 'level2 h', '', 'Level2');
     }
 
     update () {
