@@ -1,128 +1,175 @@
 import 'phaser';
+import config from '../Config/config';
 
-
-export default class level1Scene extends Phaser.Scene {
-    
+export default class Level1Scene extends Phaser.Scene {
   constructor () {
     super('Level1');
     this.platforms;
     this.player;
+    this.alien;
     this.cursors;
+    this.stars;
+    this.score = 0;
+    this.scoreText;
+    this.bombs;
     this.background;
-    this.diamonds;
-    this.ground;
-    this.enemy;
+    this.timedEvent
   }
 
   preload () {
     // load images
-    this.load.image('background', 'assets/sky.png');
+    this.load.image('sky', 'assets/sky.png');
     this.load.image('ground', 'assets/platform.png');
-    this.load.image('diamond', 'assets/diamond.png');
-    this.load.spritesheet('woof', 'assets/woof.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.image('star', 'assets/star.png');
+    this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-
+    this.load.spritesheet('alien', 'assets/spritesheets/Alien.png',{frameWidth:128, frameHeight:96 });
+    this.load.image('wave', '../../assets/wave.jpg');
+    this.load.image('blue', 'assets/blue.jpg');
+    this.load.image('space', 'assets/space.jpg');
   }
 
   create () {
-   this.background=  this.add.tileSprite(0, 0, 800, 600, 'background');
-   this.background.setOrigin(0,0);
-   this.background.setScrollFactor(0);
-   
- 
+    this.add.image(400, 300, 'sky');
+    // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
+    // this.background.setOrigin(0, 0);
+    // this.background.setScrollFactor(0);
+    this.background=  this.add.tileSprite(0, 0, 800, 600, 'space');
+    this.background.setOrigin(0,0);
+    this.background.setScrollFactor(0);
 
-    //this.setCollideWorldBounds(true, 1920, 1920);
-    this.scoreText = this.add.text(16, 16, 'Level 1', { fontSize: '32px', fill: '#000' });
+    this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
-   ///  300, 750
-    this.platforms.create(0,  900, 'ground').setScale(4).refreshBody();
-    this.platforms.create(600, 570, 'ground');
-    this.platforms.create(50, 389, 'ground');
-    this.platforms.create(750, 300, 'ground');
-    //this.platforms.setCollideWorldBounds(true);
- 
 
-    this.player = this.physics.add.sprite(100, 450, 'woof');
-    this.createEnemy();
-    this.player.body.bounce.y =.2;
-    this.player.setCollideWorldBounds(false);
-    this.player.body.gravity.y = 800;
-    this.cameras.main.startFollow(this.player);
+    // BASE
+    // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
-   
+    this.platforms.create(400, 616, 'ground').setScale(3).refreshBody();
+    this.platforms.create(1200, 290, 'ground').setScale(1).refreshBody();
+    this.platforms.create(1800, 370, 'ground').setScale(1).refreshBody();
+
+    this.platforms.create(1200, 568, 'ground').setScale(3).refreshBody();
+    this.platforms.create(1600, 532, 'ground').setScale(3).refreshBody();
     
-    this.diamonds = this.physics.add.group({
-        key: 'diamond',
-        repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
-    });
+    this.platforms.create(3100, 568, 'ground').setScale(3).refreshBody();
+    this.platforms.create(3100, 450, 'ground').setScale(1).refreshBody();
+    this.platforms.create(3600, 390, 'ground').setScale(1).refreshBody();
+    this.platforms.create(3150, 250, 'ground').setScale(1).refreshBody();
 
-    this.diamonds.children.iterate(function (child) {
-
-        //  Give each star a slightly different bounce
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-
-    });
-
+    this.platforms.create(4100, 525, 'ground').setScale(3).refreshBody();
+    this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
+    this.platforms.create(5900, 525, 'ground').setScale(2,3).refreshBody();
+    this.platforms.create(6700, 450, 'ground').setScale(3).refreshBody();
     
-     
+    // this.platforms.create(800, 400, 'ground');
+    // this.platforms.create(50, 250, 'ground');
+    // this.platforms.create(950, 220, 'ground');
+
+    this.player = this.physics.add.sprite(3600, 450, 'dude');
+    this.player.setBounce(0.2);
+    this.physics.world.bounds.width = 10000;
+    this.physics.world.bounds.height = 700;
+    this.player.setCollideWorldBounds(true);
+    
+    this.alien = this.physics.add.sprite(500, 450, 'alien');
+    this.alien.setBounce(0.2);
+    this.alien.setCollideWorldBounds(true);
+    this.alienAnims();
+    this.alien.anims.play('AlienWalk', true);
+    this.alien.setVelocityX(100);   
+    // this.player.body.onWorldBounds = true;
+    // To simulate less greavity
+    // this.player.body.setGravityY(300);
+
     this.physics.add.collider(this.player, this.platforms);
-  
-    this.physics.add.collider(this.diamonds, this.platforms);
-
-
+    this.physics.add.collider(this.alien, this.platforms);
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('woof', { start: 0, end: 1}),
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     });
 
-
- ;
-
-   
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'dude', frame: 4 } ],
+        frameRate: 20
+    });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('woof', { start: 2, end: 3}),
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
         frameRate: 10,
         repeat: -1
     });
+    
+    // No stars, asteroids
+    // stars = this.physics.add.group({
+    //     key: 'star',
+    //     repeat: 11,
+    //     setXY: { x: 12, y: 0, stepX: 70 }
+    // });
+    // stars.children.iterate(function (child) {
+    //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+    // });
+    // this.physics.add.collider(stars, platforms);
+    // this.physics.add.overlap(player, stars, collectStar, null, this);
 
-   
+    this.bombs = this.physics.add.group();
+    this.physics.add.collider(this.bombs, this.platforms);
+    this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
+    // Camera World Bounds
+    // (x origin, y origin, width, height)
+    this.cameras.main.setBounds(0, 0, 10000, 600);
+    this.cameras.main.startFollow(this.player);
+
+    //Timer for asteroids
+    var timedEvent = this.time.addEvent({ 
+        delay: 5000, 
+        callback: this.onEvent, 
+        callbackScope: this, 
+        repeat: 999999, 
+        startAt: 1 
+    });
 }
 
-   
-   createEnemy (){
-    this.enemy = this.physics.add.sprite(100, 550, 'dude');
-    this.physics.add.collider(this.enemy, this.platforms);
-
-
-
+alienAnims(){
     this.anims.create({
-        key: 'dudeRight',
-        frames: this.anims.generateFrameNumbers('dude', {  start: 5, end: 8 }),
-        frameRate: 10,
+        key: 'AlienWalk',
+        frames: this.anims.generateFrameNumbers('alien', { start: 0, end: 3 }),
+        frameRate: 8,
         repeat: -1
-    }); 
+    });
+}
 
-    this.enemy.anims.play("dudeRight", true);
-    this.enemy.setVelocityX(100);
-    //this.enemy.setCollideWorldBounds(true);
-    //this.setCollideWorldBounds(true);
+  onEvent() {
+    // console.log("onevent");
+    // console.log(this.cameras.main.worldView.x);
+    // console.log(this.cameras.main.worldView.x + 800);
+  }
 
-   }
-   
-   updateEnemy(){
-    if(this.enemy.xSpeed>0 && this.enemy.x>this.platforms.x+this.platforms.width/2 || this.enemy.xSpeed<0 && this.enemy.x<this.platforms.x-this.platforms.width/2){
-        this.enemy.xSpeed*=-1;
-    }	
-   }
+
+  callAsteroid(){
+      console.log("time went off")
+  }
+
+    // collectStar (player, star){
+    //     star.disableBody(true, true);
+    // }
+
+    hitBomb (player, bomb){
+        this.physics.pause();
+    
+        player.setTint(0xff0000);
+    
+        player.anims.play('turn');
+    
+        gameOver = true;
+    }
 
   update(){
-     this.background.tilePositionX= this.cameras.main.scrollX * .3;
-     this.updateEnemy();
+    this.background.tilePositionX= this.cameras.main.scrollX * .3;
     this.cursors = this.input.keyboard.createCursorKeys();
     if (this.cursors.left.isDown)
     {
@@ -145,20 +192,7 @@ export default class level1Scene extends Phaser.Scene {
     
     if (this.cursors.up.isDown && this.player.body.touching.down)
     {
-        this.player.setVelocityY(-300);
+        this.player.setVelocityY(-330);
     }
-
-
-
   }
-
-
-
- render() {
-
-    this.debug.cameraInfo(this.camera, 32, 32);
-    this.debug.spriteCoords(this.player, 32, 500);
-
-}
-
 };
