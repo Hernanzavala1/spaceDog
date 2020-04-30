@@ -166,8 +166,8 @@ export default class Level2Scene extends Phaser.Scene {
         // this.veil.setDepth(5);
         this.veil.setScrollFactor(0);
 
-        new Button(this, config.width /2, config.height/2 + 100, 'resume', 'resume_hover', '');
-        new Button(this, config.width /2, config.height/2 + 200, 'quit', 'quit_hover', '', 'Title');
+        // new Button(this, config.width /2, config.height/2 + 100, 'resume', 'resume_hover', '');
+        // new Button(this, config.width /2, config.height/2 + 200, 'quit', 'quit_hover', '', 'Title');
 
         // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
         // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
@@ -219,8 +219,8 @@ export default class Level2Scene extends Phaser.Scene {
         // this.veil.setDepth(5);
         this.veil.setScrollFactor(0);
 
-        new Button(this, config.width /2, config.height/2 + 100, 'retry', 'retry_hover', '', 'Level2');
-        new Button(this, config.width /2, config.height/2 + 200, 'main menu', 'main menu hover', '', 'Title');
+        // new Button(this, config.width /2, config.height/2 + 100, 'retry', 'retry_hover', '', 'Level2');
+        // new Button(this, config.width /2, config.height/2 + 200, 'main menu', 'main menu hover', '', 'Title');
         
         // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
         // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
