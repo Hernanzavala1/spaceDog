@@ -54,7 +54,7 @@ export default class Level2Scene extends Phaser.Scene {
 
     this.player = this.physics.add.sprite(3100, 450, 'dude');
     this.player.setBounce(0.2);
-    this.physics.world.bounds.width = 10000;
+    this.physics.world.bounds.width = 10000; // MUST BE THE SAME AS Camera-World-Bounds
     this.physics.world.bounds.height = 700;
     this.player.setCollideWorldBounds(true);
     // this.player.body.onWorldBounds = true;
@@ -98,7 +98,7 @@ export default class Level2Scene extends Phaser.Scene {
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
-    // Camera World Bounds
+    // Camera-World-Bounds
     // (x origin, y origin, width, height)
     this.cameras.main.setBounds(0, 0, 10000, 600);
     this.cameras.main.startFollow(this.player);
