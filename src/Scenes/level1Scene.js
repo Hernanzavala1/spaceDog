@@ -10,6 +10,7 @@ export default class Level1Scene extends Phaser.Scene {
     this.player;
     this.alien;
     this.cursors;
+    this.spacebar;
     this.stars;
     this.score = 0;
     this.scoreText;
@@ -153,9 +154,15 @@ export default class Level1Scene extends Phaser.Scene {
     this.portal =this.physics.add.sprite(6000, 400, 'portal');
     this.physics.add.collider(this.portal, this.platforms);
     this.portal.anims.play('Portal');
+    this.physics.add.overlap(this.player, this.portal, function(){
+        if (!finished) {
+            this.player.anims.play('dying');
+        }
+        this.finished = true;
+    }.bind(this));
     
    
-    this.physics.add.overlap(this.player, this.portal, portalReached.bind(this));
+    // this.physics.add.overlap(this.player, this.portal, portalReached.bind(this));
     this.physics.add.collider(this.geyser, this.platforms);
     this.physics.add.overlap(this.player, this.geyser, function(){
         this.timer.restart();
@@ -202,9 +209,21 @@ alienAnims(){
   update(){
     this.background.tilePositionX= this.cameras.main.scrollX * .3;
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.spacebar = this.input.keyboard.addKey("SPACE");
+    var run = false;
+    if (!this.finished) {
+    if (this.spacebar.isDown) {
+        run = true;
+    }
+
+    if (this.spacebar.isUp) {
+        run = false;
+    }
+
     if (this.cursors.left.isDown)
     {
-        this.player.setVelocityX(-200);
+        if (run) this.player.setVelocityX(-400);
+        else this.player.setVelocityX(-200);
         if(!this.player.flipX){
             this.player.flipX = true;
         }
@@ -213,7 +232,8 @@ alienAnims(){
     }
     else if (this.cursors.right.isDown)
     {
-        this.player.setVelocityX(200);
+        if (run) this.player.setVelocityX(400);
+        else this.player.setVelocityX(200);
         if(this.player.flipX){
             this.player.flipX = false;
         }
@@ -232,13 +252,7 @@ alienAnims(){
         this.player.setVelocityY(-330);
     }
   }
+}
 
   
 };
-function portalReached(){
-    console.log("reached portal");
-    if(!this.finished ){
-     this.player.anims.play('dying');
-    this.finished = true;
-    }
-}
