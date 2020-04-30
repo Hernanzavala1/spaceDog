@@ -1,5 +1,6 @@
 import 'phaser';
 import config from '../Config/config';
+import Timer from '../Objects/Timer';
 
 export default class Level2Scene extends Phaser.Scene {
     constructor() {
