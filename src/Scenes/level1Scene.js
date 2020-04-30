@@ -3,6 +3,7 @@ import config from '../Config/config';
 import Timer from '../Objects/Timer';
 
 export default class Level1Scene extends Phaser.Scene {
+    
   constructor () {
     super('Level1');
     this.platforms;
@@ -14,7 +15,9 @@ export default class Level1Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
-    this.timedEvent
+    this.timedEvent;
+    this.timer;
+    this.finished = false;
   }
 
   preload () {
@@ -23,12 +26,14 @@ export default class Level1Scene extends Phaser.Scene {
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
     this.load.spritesheet('alien', 'assets/spritesheets/Alien.png',{frameWidth:128, frameHeight:96 });
     this.load.image('wave', '../../assets/wave.jpg');
     this.load.image('blue', 'assets/blue.jpg');
     this.load.image('space', 'assets/space.jpg');
     this.load.image('bubble', 'assets/bubble.png');
+    this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png',{frameWidth:128, frameHeight:128 });
+    this.load.spritesheet('portal', 'assets/spritesheets/Portal.png',{frameWidth:128, frameHeight:128 });
   }
 
   create () {
@@ -67,7 +72,7 @@ export default class Level1Scene extends Phaser.Scene {
     // this.platforms.create(50, 250, 'ground');
     // this.platforms.create(950, 220, 'ground');
 
-    this.player = this.physics.add.sprite(3600, 450, 'dude');
+    this.player = this.physics.add.sprite(5600, 0, 'spaceDog');
     this.player.setBounce(0.2);
     this.physics.world.bounds.width = 10000;
     this.physics.world.bounds.height = 700;
@@ -86,40 +91,31 @@ export default class Level1Scene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.alien, this.platforms);
     this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        key: 'walk',
+        frames: this.anims.generateFrameNumbers('spaceDog', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
-        key: 'turn',
-        frames: [ { key: 'dude', frame: 4 } ],
-        frameRate: 20
-    });
-
-    this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        key: 'walk',
+        frames: this.anims.generateFrameNumbers('spaceDog', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     });
-    
-    // No stars, asteroids
-    // stars = this.physics.add.group({
-    //     key: 'star',
-    //     repeat: 11,
-    //     setXY: { x: 12, y: 0, stepX: 70 }
-    // });
-    // stars.children.iterate(function (child) {
-    //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    // });
-    // this.physics.add.collider(stars, platforms);
-    // this.physics.add.overlap(player, stars, collectStar, null, this);
+
+    this.anims.create({
+        key: 'dying',
+        frames: this.anims.generateFrameNumbers('spaceDog', { start: 20, end: 23 }),
+        frameRate: 10,
+        repeat: 0
+    });
+
 
     this.bombs = this.physics.add.group();
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
 
     // Camera World Bounds
     // (x origin, y origin, width, height)
@@ -134,7 +130,40 @@ export default class Level1Scene extends Phaser.Scene {
         repeat: 999999, 
         startAt: 1 
     });
+
+    this.anims.create({
+        key: 'geysers',
+        frames: this.anims.generateFrameNumbers('geyser'),
+        frameRate: 8,
+        repeat: -1
+    });
+
+    this.timer = new Timer(this,0,0,5, 4000);
+    this.geyser =  this.physics.add.sprite(100, 400, 'geyser');
+    this.geyser.anims.play('geysers');
+
+
+    this.anims.create({
+        key: 'Portal',
+        frames: this.anims.generateFrameNumbers('portal'),
+        frameRate: 8,
+        repeat: -1
+      });
+
+    this.portal =this.physics.add.sprite(6000, 400, 'portal');
+    this.physics.add.collider(this.portal, this.platforms);
+    this.portal.anims.play('Portal');
+    
+   
+    this.physics.add.overlap(this.player, this.portal, portalReached.bind(this));
+    this.physics.add.collider(this.geyser, this.platforms);
+    this.physics.add.overlap(this.player, this.geyser, function(){
+        this.timer.restart();
+    }.bind(this));
+
+
 }
+
 
 alienAnims(){
     this.anims.create({
@@ -175,15 +204,21 @@ alienAnims(){
     this.cursors = this.input.keyboard.createCursorKeys();
     if (this.cursors.left.isDown)
     {
-        this.player.setVelocityX(-160);
+        this.player.setVelocityX(-200);
+        if(!this.player.flipX){
+            this.player.flipX = true;
+        }
     
-        this.player.anims.play('left', true);
+        this.player.anims.play('walk', true);
     }
     else if (this.cursors.right.isDown)
     {
-        this.player.setVelocityX(160);
-    
-        this.player.anims.play('right', true);
+        this.player.setVelocityX(200);
+        if(this.player.flipX){
+            this.player.flipX = false;
+        }
+      
+        this.player.anims.play('walk', true);
     }
     else
     {
@@ -197,4 +232,13 @@ alienAnims(){
         this.player.setVelocityY(-330);
     }
   }
+
+  
 };
+function portalReached(){
+    console.log("reached portal");
+    if(!this.finished ){
+     this.player.anims.play('dying');
+    this.finished = true;
+    }
+}
