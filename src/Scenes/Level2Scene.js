@@ -1,5 +1,6 @@
 import 'phaser';
 import config from '../Config/config';
+import Timer from '../Objects/Timer';
 
 export default class Level2Scene extends Phaser.Scene {
   constructor () {
@@ -12,7 +13,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
-    this.timedEvent
+    this.timedEvent;
+    this.geyser;
   }
 
   preload () {
@@ -22,9 +24,11 @@ export default class Level2Scene extends Phaser.Scene {
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('geyser', 'assets/Spritesheets/Geyser.png', {frameWidth: 128, frameHeight: 128});
     this.load.image('wave', '../../assets/wave.jpg');
     this.load.image('blue', 'assets/blue.jpg');
     this.load.image('space', 'assets/space.jpg');
+    this.load.image('bubble', 'assets/bubble.png');
   }
 
   create () {
@@ -60,6 +64,13 @@ export default class Level2Scene extends Phaser.Scene {
     // this.player.body.onWorldBounds = true;
     // To simulate less greavity
     // this.player.body.setGravityY(300);
+
+    this.anims.create({
+      key: 'geysers',
+      frames: this.anims.generateFrameNames('geyser'),
+      frameRate: 10,
+      repeat: -1
+    });
 
     this.physics.add.collider(this.player, this.platforms);
     this.anims.create({
@@ -111,6 +122,20 @@ export default class Level2Scene extends Phaser.Scene {
         repeat: 999999, 
         startAt: 1 
     });
+
+    //in game bubble timer
+    this.timer = new Timer(this,0,0,5,4000);
+
+    // template for geyser colision for timer
+    this.geyser = this.physics.add.sprite(300, 450, 'geyser');
+
+    this.geyser.anims.play('geysers');
+    
+    this.physics.add.collider(this.geyser, this.platforms);
+
+    this.physics.add.overlap(this.player, this.geyser, function() {
+      this.timer.restart();
+    }.bind(this));
 }
 
   onEvent() {
@@ -163,6 +188,10 @@ export default class Level2Scene extends Phaser.Scene {
     if (this.cursors.up.isDown && this.player.body.touching.down)
     {
         this.player.setVelocityY(-330);
+    }
+
+    if (this.timer.expired) {
+      //game over
     }
   }
 };
