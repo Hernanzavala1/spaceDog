@@ -4,28 +4,39 @@ import Button from '../Objects/Button';
 
 export default class LevelScene extends Phaser.Scene {
   constructor () {
-    super('Level');
+    super('Level');this.esc;
   }
-  
     preload () {
         // load images
-        this.load.image('sky', 'assets/sky.png');
+        this.load.image('levelselect', 'assets/ui/LevelSelect.png');
+        this.load.image('level1', 'assets/ui/Level1Button/Level1Button.png');
+        this.load.image('level1 h', 'assets/ui/Level1Button/Level1Button_Hovered.png');
+        this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
+        this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 }
         );
+        
+        //controls
+        this.esc = this.input.keyboard.addKey('ESC');
     }
 
     create () {
-        this.add.image(400, 300, 'sky');
+        this.add.image(400, 300, 'levelselect');
         // this.text = this.scene.addtext(config.width/2, config.height-300, "Select Level", { fontFamily: 'Georgia', fontSize: '32px', fill: '#ec186c'});
         // this.add(this.text);
-        this.selectLeveltext = this.add.text(400, 150, 'Select Level', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', fontSize: '40px', fill: '#ec186c'});
-        this.selectLeveltext.setOrigin(.5, 0);
         
-        this.level1 = new Button(this, 400, config.height/2, 'blueButton1', 'blueButton2', 'level 1', 'Level1');
-        this.level2 = new Button(this, 400, config.height/2 + 100, 'blueButton1', 'blueButton2', 'Level 2', 'Level2');
+        this.level1 = new Button(this, 400, config.height/2, 'level1', 'level1 h', '', 'Level1');
+        this.level2 = new Button(this, 400, config.height/2 + 100, 'level2', 'level2 h', '', 'Level2');
+    }
+
+    update () {
+      if (this.esc.isDown) {
+        this.scene.switch('Title');
+        this.esc.isDown = false;
+      }
     }
 
 };
