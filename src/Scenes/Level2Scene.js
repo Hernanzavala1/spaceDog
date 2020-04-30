@@ -52,7 +52,7 @@ export default class Level2Scene extends Phaser.Scene {
     // this.platforms.create(50, 250, 'ground');
     // this.platforms.create(950, 220, 'ground');
 
-    this.player = this.physics.add.sprite(3100, 450, 'dude');
+    this.player = this.physics.add.sprite(100, 450, 'dude');
     this.player.setBounce(0.2);
     this.physics.world.bounds.width = 10000;
     this.physics.world.bounds.height = 700;
