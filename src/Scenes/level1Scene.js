@@ -60,9 +60,9 @@ export default class Level1Scene extends Phaser.Scene {
     this.platforms.create(1600, 532, 'ground').setScale(3).refreshBody();
     
     this.platforms.create(3100, 568, 'ground').setScale(3).refreshBody();
-    this.platforms.create(3100, 450, 'ground').setScale(1).refreshBody();
-    this.platforms.create(3600, 390, 'ground').setScale(1).refreshBody();
-    this.platforms.create(3150, 250, 'ground').setScale(1).refreshBody();
+    this.platforms.create(3100, 370, 'ground').setScale(1).refreshBody();//1 
+    this.platforms.create(3600, 260, 'ground').setScale(1).refreshBody();// 3
+    this.platforms.create(3000, 200, 'ground').setScale(1).refreshBody();// 2
 
     this.platforms.create(4100, 525, 'ground').setScale(3).refreshBody();
     this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
@@ -73,7 +73,7 @@ export default class Level1Scene extends Phaser.Scene {
     // this.platforms.create(50, 250, 'ground');
     // this.platforms.create(950, 220, 'ground');
 
-    this.player = this.physics.add.sprite(5600, 0, 'spaceDog');
+    this.player = this.physics.add.sprite(3600, 0, 'spaceDog');
     this.player.setBounce(0.2);
     this.physics.world.bounds.width = 10000;
     this.physics.world.bounds.height = 700;
@@ -140,7 +140,7 @@ export default class Level1Scene extends Phaser.Scene {
     });
 
     this.timer = new Timer(this,0,0,5, 4000);
-    this.geyser =  this.physics.add.sprite(100, 400, 'geyser');
+    this.geyser =  this.physics.add.sprite(3000, 200, 'geyser');
     this.geyser.anims.play('geysers');
 
 
@@ -157,6 +157,13 @@ export default class Level1Scene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.portal, function(){
         if (!this.finished) {
             this.player.anims.play('dying');
+            setTimeout(()=>{
+             var won =   this.add.text(6000, 200, 'You Won!', {fontSize: '56px', fill: '#6d206e'});
+                won.setOrigin(.5);
+                this.physics.pause();
+            },100);
+            
+            
         }
         this.finished = true;
     }.bind(this));
@@ -251,6 +258,10 @@ alienAnims(){
     {
         this.player.setVelocityY(-330);
     }
+    
+  }
+  else{
+
   }
 }
 
