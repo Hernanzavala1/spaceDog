@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "spacedog",
-    "public": "public",
+    "public": "/",
     "ignore": [
       "firebase.json",
       "**/.*",
