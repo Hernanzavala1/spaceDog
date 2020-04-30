@@ -12,7 +12,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
-    this.timedEvent
+    this.timedEvent;
+    this.dead = false;
   }
 
   preload () {
@@ -52,7 +53,7 @@ export default class Level2Scene extends Phaser.Scene {
     // this.platforms.create(50, 250, 'ground');
     // this.platforms.create(950, 220, 'ground');
 
-    this.player = this.physics.add.sprite(3100, 450, 'dude');
+    this.player = this.physics.add.sprite(100, 450, 'dude');
     this.player.setBounce(0.2);
     this.physics.world.bounds.width = 10000; // MUST BE THE SAME AS Camera-World-Bounds
     this.physics.world.bounds.height = 700;
@@ -83,15 +84,12 @@ export default class Level2Scene extends Phaser.Scene {
     });
     
     // No stars, asteroids
-    // stars = this.physics.add.group({
+    // var stars = this.physics.add.group({
     //     key: 'star',
-    //     repeat: 11,
-    //     setXY: { x: 12, y: 0, stepX: 70 }
+    //     setXY: { x: 10, y: -10}
     // });
-    // stars.children.iterate(function (child) {
-    //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    // });
-    // this.physics.add.collider(stars, platforms);
+
+    // this.physics.add.collider(stars, this.platforms);
     // this.physics.add.overlap(player, stars, collectStar, null, this);
 
     this.bombs = this.physics.add.group();
@@ -105,7 +103,7 @@ export default class Level2Scene extends Phaser.Scene {
 
     //Timer for asteroids
     var timedEvent = this.time.addEvent({ 
-        delay: 5000, 
+        delay: 2500, 
         callback: this.onEvent, 
         callbackScope: this, 
         repeat: 999999, 
@@ -117,8 +115,18 @@ export default class Level2Scene extends Phaser.Scene {
     // console.log("onevent");
     // console.log(this.cameras.main.worldView.x);
     // console.log(this.cameras.main.worldView.x + 800);
+    var temp = Phaser.Math.Between(this.cameras.main.worldView.x+100, this.cameras.main.worldView.x + 800);
+    console.log(temp);
+    var stars = this.physics.add.group({
+        key: 'star',
+        setXY: { x: temp, y: -10}
+    });
+    this.physics.add.overlap(this.player, stars, this.collectStar, null, this);
   }
 
+  collectStar(){
+      console.log("die");
+  }
 
   callAsteroid(){
       console.log("time went off")
