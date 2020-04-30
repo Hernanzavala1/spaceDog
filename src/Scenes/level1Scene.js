@@ -1,7 +1,8 @@
 import 'phaser';
+import Timer from '../Objects/Timer';
 
 
-export default class Level2Scene extends Phaser.Scene {
+export default class level1Scene extends Phaser.Scene {
     
   constructor () {
     super('Level1');
@@ -21,10 +22,11 @@ export default class Level2Scene extends Phaser.Scene {
     this.load.image('diamond', 'assets/diamond.png');
     this.load.spritesheet('woof', 'assets/woof.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-
+    this.load.image('bubble', 'assets/bubble.png');
   }
 
   create () {
+
    this.background=  this.add.tileSprite(0, 0, 800, 600, 'background');
    this.background.setOrigin(0,0);
    this.background.setScrollFactor(0);
@@ -89,7 +91,6 @@ export default class Level2Scene extends Phaser.Scene {
         frameRate: 10,
         repeat: -1
     });
-
    
 }
 

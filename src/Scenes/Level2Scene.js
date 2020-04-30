@@ -1,4 +1,6 @@
 import 'phaser';
+import config from '../Config/config';
+import Timer from '../Objects/Timer';
 
 export default class Level2Scene extends Phaser.Scene {
   constructor () {
@@ -11,7 +13,8 @@ export default class Level2Scene extends Phaser.Scene {
     this.scoreText;
     this.bombs;
     this.background;
-    this.emitter;
+    this.timedEvent;
+    this.geyser;
   }
 
   preload () {
@@ -21,27 +24,55 @@ export default class Level2Scene extends Phaser.Scene {
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('geyser', 'assets/Spritesheets/Geyser.png', {frameWidth: 128, frameHeight: 128});
+    this.load.image('wave', '../../assets/wave.jpg');
+    this.load.image('blue', 'assets/blue.jpg');
+    this.load.image('space', 'assets/space.jpg');
+    this.load.image('bubble', 'assets/bubble.png');
   }
 
   create () {
-    this.background = this.add.tileSprite(0,0,800, 600, 'sky');
+    this.add.image(400, 300, 'sky');
+    // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
+    // this.background.setOrigin(0, 0);
+    // this.background.setScrollFactor(0);
+    this.background=  this.add.tileSprite(0, 0, 800, 600, 'space');
     this.background.setOrigin(0,0);
-   this.background.setScrollFactor(0);
+    this.background.setScrollFactor(0);
 
     this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-    this.platforms.create(600, 400, 'ground');
-    this.platforms.create(50, 389, 'ground');
-    this.platforms.create(750, 300, 'ground');
+
+    // BASE
+    // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+    this.platforms.create(400, 616, 'ground').setScale(3).refreshBody();
+    this.platforms.create(1200, 568, 'ground').setScale(3).refreshBody();
+    this.platforms.create(1600, 532, 'ground').setScale(3).refreshBody();
+    
+    this.platforms.create(3100, 568, 'ground').setScale(3).refreshBody();
+
+    // this.platforms.create(800, 400, 'ground');
+    // this.platforms.create(50, 250, 'ground');
+    // this.platforms.create(950, 220, 'ground');
 
     this.player = this.physics.add.sprite(100, 450, 'dude');
-    this.player.body.bounce.y =.5;
-    this.player.setCollideWorldBounds(false);
-    this.player.body.gravity.y = 800;
+    this.player.setBounce(0.2);
+    this.physics.world.bounds.width = 10000;
+    this.physics.world.bounds.height = 700;
+    this.player.setCollideWorldBounds(true);
+    // this.player.body.onWorldBounds = true;
+    // To simulate less greavity
+    // this.player.body.setGravityY(300);
+
+    this.anims.create({
+      key: 'geysers',
+      frames: this.anims.generateFrameNames('geyser'),
+      frameRate: 10,
+      repeat: -1
+    });
 
     this.physics.add.collider(this.player, this.platforms);
-    this.cameras.main.startFollow(this.player);
     this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
@@ -73,19 +104,49 @@ export default class Level2Scene extends Phaser.Scene {
     // });
     // this.physics.add.collider(stars, platforms);
     // this.physics.add.overlap(player, stars, collectStar, null, this);
-  
-    var particles = this.add.particles('bomb')
-
-    var emitter = particles.createEmitter({
-        speed: 100,
-        scale: { start: 1, end: 0 },
-        blendMode: 'ADD'
-    });
-
 
     this.bombs = this.physics.add.group();
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
+    // Camera World Bounds
+    // (x origin, y origin, width, height)
+    this.cameras.main.setBounds(0, 0, 10000, 600);
+    this.cameras.main.startFollow(this.player);
+
+    //Timer for asteroids
+    var timedEvent = this.time.addEvent({ 
+        delay: 5000, 
+        callback: this.onEvent, 
+        callbackScope: this, 
+        repeat: 999999, 
+        startAt: 1 
+    });
+
+    //in game bubble timer
+    this.timer = new Timer(this,0,0,5,4000);
+
+    // template for geyser colision for timer
+    this.geyser = this.physics.add.sprite(300, 450, 'geyser');
+
+    this.geyser.anims.play('geysers');
+    
+    this.physics.add.collider(this.geyser, this.platforms);
+
+    this.physics.add.overlap(this.player, this.geyser, function() {
+      this.timer.restart();
+    }.bind(this));
+}
+
+  onEvent() {
+    // console.log("onevent");
+    // console.log(this.cameras.main.worldView.x);
+    // console.log(this.cameras.main.worldView.x + 800);
+  }
+
+
+  callAsteroid(){
+      console.log("time went off")
   }
 
     // collectStar (player, star){
@@ -127,6 +188,10 @@ export default class Level2Scene extends Phaser.Scene {
     if (this.cursors.up.isDown && this.player.body.touching.down)
     {
         this.player.setVelocityY(-330);
+    }
+
+    if (this.timer.expired) {
+      //game over
     }
   }
 };
