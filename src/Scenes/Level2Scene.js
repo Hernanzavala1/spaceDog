@@ -115,7 +115,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.input.keyboard.on('keydown', this.otherKey, this);
 
         //Timer for asteroids
-        var timedEvent = this.time.addEvent({
+        this.timedEvent = this.time.addEvent({
             delay: 2500,
             callback: this.spawnAsteroid,
             callbackScope: this,
@@ -129,28 +129,57 @@ export default class Level2Scene extends Phaser.Scene {
     escOnly(event) {
         let code = event.keyCode;
         if (code == 27 && this.gamePaused == false) {
-            // console.log("pause trigger");
+            console.log("ESC + game not paused");
             // console.log("game paused? " + this.gamePaused);
             //Have to check if game over or not 
             console.log(this.currentX);
             this.createPauseScreen();
             this.togglePauseScreen(true);
-            this.gamePaused = true;
             this.startPause();
-
         }else if(code == 27 && this.gamePaused == true){
+            console.log("ESC + game paused");
             this.togglePauseScreen(false);
-            this.gamePaused = false;
             this.endPause();
         }
     }
     // Start Pause - Player stop moving, Sprite stop moving, Sprites stop spawning
     startPause(){
+        console.log('Start Pause');
+        // this.scene.pause();
         this.physics.pause();
+        this.timedEvent.paused = true;
     }
     // End Pause - Player moving, Sprite moving, Sprites spawning
     endPause(){
+        console.log('End Pause');
+        // this.scene.resume();
         this.physics.resume();
+        this.timedEvent.paused = false;
+    }
+    createPauseScreen() {
+        console.log('Create Pause Screen');
+        this.veil = this.add.graphics({ x: 0, y: 0 });
+        // this.veil.fillStyle('#6d206e', 0.75);
+        // Trouble making veil purple
+        this.veil.fillStyle('#6d206e', 0.5);
+        this.veil.fillRect(0, 0, config.width, config.height);
+        // this.veil.setDepth(5);
+        this.veil.setScrollFactor(0);
+
+        // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
+        // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
+        this.txt_pause = this.add.text(this.currentX + 400, 200, 'Pause', {fontSize: '56px', fill: '#6d206e'});
+        this.txt_pause.setOrigin(.5);
+
+        // this.txt_pause.setDepth(5);
+        // this.txt_pause.setScrollFactor(0);
+    }
+    
+    togglePauseScreen(is_visible) {
+        console.log('Paused');
+        this.veil.setVisible(is_visible);
+        this.txt_pause.setVisible(is_visible);
+        this.gamePaused = is_visible;
     }
     otherKey(event){
         // console.log("other event");
@@ -158,6 +187,7 @@ export default class Level2Scene extends Phaser.Scene {
     }
 
     spawnAsteroid() {
+        console.log('Spawn Asteroid');
         // console.log("spawnAsteroid");
         // console.log(this.cameras.main.worldView.x);
         // console.log(this.cameras.main.worldView.x + 800);
@@ -172,11 +202,34 @@ export default class Level2Scene extends Phaser.Scene {
 
     setDeath() {
         if (!this.dead) {
+            console.log('Set death');
             this.dead = true;
-            console.log("died")
         }
     }
+    createGameOverScreen() {
+        console.log('Create Game Over');
+        this.veil = this.add.graphics({ x: 0, y: 0 });
+        // this.veil.fillStyle('#6d206e', 0.75);
+        this.veil.fillRect(0, 0, config.width, config.height);
+        // Trouble making veil purple
+        this.veil.fillStyle('6d206e', 0.5);
+        // this.veil.setDepth(5);
+        this.veil.setScrollFactor(0);
 
+        // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
+        // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
+        this.txt_pause = this.add.text(this.currentX + 400, 200, 'You Died!', {fontSize: '56px', fill: '#6d206e'});
+        this.txt_pause.setOrigin(.5);
+
+        // this.txt_pause.setDepth(5);
+        // this.txt_pause.setScrollFactor(0);
+    }
+    triggerGameOver() {
+        console.log('Trigger Game Over');
+        this.createGameOverScreen();
+        this.physics.pause();
+        this.timedEvent.paused = true;
+    }
     callAsteroid() {
         // console.log("time went off")
     }
@@ -212,43 +265,12 @@ export default class Level2Scene extends Phaser.Scene {
         if (this.cursors.up.isDown && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
         }
-        this.isDead();
+        this.currentX = this.cameras.main.worldView.x;
         if (this.dead) {
-            this.triggerGameOver;
+            this.triggerGameOver();
+            this.scene.pause();
             return;
         }
-        this.currentX = this.cameras.main.worldView.x;
-        console.log(this.currentX);
     }
 
-    isDead() {
-        if (this.dead) {
-
-        }
-    }
-    createPauseScreen() {
-        this.veil = this.add.graphics({ x: 0, y: 0 });
-        // this.veil.fillStyle('#6d206e', 0.75);
-        this.veil.fillStyle('#000000', 0.75);
-        this.veil.fillRect(0, 0, config.width, config.height);
-        // this.veil.setDepth(5);
-        this.veil.setScrollFactor(0);
-
-        // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
-        // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
-        this.txt_pause = this.add.text(this.currentX + 400, 200, 'Pause', {fontSize: '56px', fill: '#000000'});
-        this.txt_pause.setOrigin(.5);
-
-        // this.txt_pause.setDepth(5);
-        // this.txt_pause.setScrollFactor(0);
-    }
-    togglePauseScreen(is_visible) {
-        console.log('Paused');
-        this.veil.setVisible(is_visible);
-        this.txt_pause.setVisible(is_visible);
-        this.gamePaused = is_visible;
-    }
-    clickPause(){
-        
-    }
 };
