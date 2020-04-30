@@ -11,8 +11,8 @@ export default class LevelScene extends Phaser.Scene {
         this.load.image('levelselect', 'assets/ui/LevelSelect.png');
         this.load.image('level1', 'assets/ui/Level1Button/Level1Button.png');
         this.load.image('level1 h', 'assets/ui/Level1Button/Level1Button_Hovered.png');
-        // this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
-        // this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
+        this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
+        this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
@@ -30,7 +30,7 @@ export default class LevelScene extends Phaser.Scene {
         // this.add(this.text);
         
         this.level1 = new Button(this, 400, config.height/2, 'level1', 'level1 h', '', 'Level1');
-        // this.level2 = new Button(this, 400, config.height/2 + 100, 'level2', 'level2 h', '', 'Level2');
+        this.level2 = new Button(this, 400, config.height/2 + 100, 'level2', 'level2 h', '', 'Level2');
     }
 
     update () {
