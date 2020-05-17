@@ -24,6 +24,9 @@ export default class Level1Scene extends Phaser.Scene {
         this.txt_pause;
         this.currentX;
         this.gamePaused = false;
+        this.duck = false;
+        this.crawl = false;
+        this.jump = false;
     }
 
     preload() {
@@ -33,6 +36,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.load.image('star', 'assets/star.png');
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
+        this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
         this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
         this.load.image('wave', '../../assets/wave.jpg');
         this.load.image('blue', 'assets/blue.jpg');
@@ -111,6 +115,8 @@ export default class Level1Scene extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.alien, this.platforms);
+
+        //animation creation
         this.anims.create({
             key: 'walk',
             frames: this.anims.generateFrameNumbers('spaceDog', { start: 0, end: 3 }),
@@ -119,19 +125,48 @@ export default class Level1Scene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'walk',
+            key: 'run',
             frames: this.anims.generateFrameNumbers('spaceDog', { start: 0, end: 3 }),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'dying',
+            key: 'disapear',
             frames: this.anims.generateFrameNumbers('spaceDog', { start: 20, end: 23 }),
             frameRate: 10,
             repeat: 0
         });
 
+        this.anims.create({
+            key: 'crawl',
+            frames: this.anims.generateFrameNumbers('spaceDogCrawl'),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'duck',
+            frames: this.anims.generateFrameNumbers('spaceDog', { start: 8, end: 11 }),
+            frameRate: 10,
+            repeat: 0,
+            nextAnim: "crawl"
+        });
+        
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('spaceDog', { start: 12, end: 15 }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'dead',
+            frames: this.anims.generateFrameNumbers('spaceDog', { start: 20, end: 23 }),
+            frameRate: 10,
+            repeat: 0
+        });
+        
 
         this.bombs = this.physics.add.group();
         this.physics.add.collider(this.bombs, this.platforms);
@@ -151,6 +186,9 @@ export default class Level1Scene extends Phaser.Scene {
         this.input.keyboard.on('keyup', this.escOnly, this);
         // Listen for Key press input - handles everything else
         this.input.keyboard.on('keydown', this.otherKey, this);
+
+        this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
 
         //Timer for asteroids
         this.timedEvent = this.time.addEvent({
@@ -185,7 +223,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.portal.anims.play('Portal');
         this.physics.add.overlap(this.player, this.portal, function () {
             if (!this.finished) {
-                this.player.anims.play('dying');
+                this.player.anims.play('disapear');
                 setTimeout(() => {
                     var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#6d206e' });
                     won.setOrigin(.5);
@@ -205,6 +243,35 @@ export default class Level1Scene extends Phaser.Scene {
         }.bind(this));
 
 
+    }
+
+    changePlayer() {
+        if (!this.duck && !this.crawl) {
+            console.log("got here");
+            this.duck = true;
+            this.player.play('duck', true);
+            setTimeout(() => {
+                if (this.duck) {
+                    this.player.setTexture('spaceDogCrawl');
+                    this.player.setSize(128, 64);
+                    this.player.setY(this.player.y + 12);
+                    this.player.anims.play('crawl', true);
+                    this.duck = false;
+                    this.crawl = true;
+                }
+            }, 400);
+        }
+        else if (this.crawl || this.duck) {
+            var temp = this.crawl;
+            this.crawl = false;
+            this.duck = false;
+            if (temp) {
+                this.player.setTexture('spaceDog');
+                this.player.setSize(128, 96); 
+                this.player.play('walk', true);
+                this.player.setY(this.player.y - 14);
+            }
+        }
     }
 
 
@@ -336,15 +403,6 @@ export default class Level1Scene extends Phaser.Scene {
     //     star.disableBody(true, true);
     // }
 
-    hitBomb(player, bomb) {
-        this.physics.pause();
-
-        player.setTint(0xff0000);
-
-        player.anims.play('turn');
-
-        gameOver = true;
-    }
 
     update() {
         this.spacebar = this.input.keyboard.addKey("SPACE");
@@ -356,31 +414,53 @@ export default class Level1Scene extends Phaser.Scene {
 
             if (this.spacebar.isUp) {
                 run = false;
+            }   
+
+            if (this.cursors.up.isDown && !this.crawl && !this.jump) {
+                this.player.play('jump', true);
+                this.jump = true;
             }
 
+            else if (this.cursors.up.isUp && this.jump) {
+                if (this.player.collider)
+                this.jump = false;
+            }
+
+            if (!this.jump) {
             if (this.cursors.left.isDown) {
-                if (run) this.player.setVelocityX(-400);
-                else this.player.setVelocityX(-200);
                 if (!this.player.flipX) {
                     this.player.flipX = true;
                 }
-
-                this.player.anims.play('walk', true);
+                if (!this.duck) {
+                if (run) this.player.setVelocityX(-600);
+                else this.player.setVelocityX(-200);
+                
+                if (this.crawl) this.player.anims.play('crawl', true);
+                else if (run) this.player.anims.play('run', true);
+                else this.player.anims.play('walk', true);
+                }
             }
             else if (this.cursors.right.isDown) {
-                if (run) this.player.setVelocityX(400);
-                else this.player.setVelocityX(200);
                 if (this.player.flipX) {
                     this.player.flipX = false;
                 }
 
-                this.player.anims.play('walk', true);
+                if (!this.duck) {
+                if (run) this.player.setVelocityX(600);
+                else this.player.setVelocityX(200);
+                
+
+                if (this.crawl) this.player.anims.play('crawl', true);
+                else if (run) this.player.anims.play('run', true);
+                else this.player.anims.play('walk', true);
+                }
             }
             else {
                 this.player.setVelocityX(0);
 
-                this.player.anims.play('turn');
+                if (!this.duck || !this.jump) this.player.anims.pause();
             }
+        }
 
             if (this.cursors.up.isDown && this.player.body.touching.down) {
                 this.player.setVelocityY(-330);
