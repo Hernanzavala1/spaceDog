@@ -36,7 +36,11 @@ export default class Timer extends Phaser.GameObjects.Container {
     this.restart();
   }
 
-  pop(sprite) {
+  pop() {
+
+    this.cancel_events(false);
+
+    var sprite = this.bubbles[this.bubbles.length - this.bubblesLeft];
     sprite.setActive(false).setVisible(false);
 
     this.bubblesLeft--;
@@ -44,29 +48,38 @@ export default class Timer extends Phaser.GameObjects.Container {
         this.expired = true;
         console.log("Game over!");
     }
+    else { //make the next bubble event
+      this.events.push(this.clock.addEvent({
+        delay:this.time,
+        callback: this.pop,
+        callbackScope: this,
+        args: []
+      }));
+    }
 
   }
 
   restart(){
 
-    var i; 
-    var j = this.events.length;
-    for (i = 0; i<j; i++){
-        this.bubbles[i].setActive(false).setVisible(true);
-        var event = this.events.pop();
-        event.remove();
+
+    this.cancel_events(true);
+    
+    //make the first bubble
+    this.events.push(this.clock.addEvent({
+        delay:this.time,
+        callback: this.pop,
+        callbackScope: this,
+        args: []
+    }));
+
+  }
+
+  cancel_events(reset){
+    if (reset) this.bubblesLeft = this.bubbles.length;
+    for (var i = 0; i<this.bubbles.length; i++){
+      if (reset) this.bubbles[i].setActive(false).setVisible(true);
+      var event = this.events.pop();
+      if (event) event.remove();
     }
-
-    this.bubblesLeft = this.bubbles.length;
-
-    for (i=0; i<this.bubbles.length; i++){
-        this.events.push(this.clock.addEvent({
-            delay:this.time*(i+1),
-            callback: this.pop,
-            callbackScope: this,
-            args: [this.bubbles[i]]
-        }));
-    }
-
   }
 }
