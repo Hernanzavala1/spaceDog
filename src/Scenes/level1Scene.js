@@ -53,9 +53,9 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     create() {
-        this.sys.game.globals.currentLevel = this;
-        this.sys.game.globals.currentLevelString = "Level1";
         this.sound.add('bark');
+
+        this.globals_setup(1);
 
         this.add_keys();
         //pause and unpause
@@ -67,13 +67,75 @@ export default class Level1Scene extends Phaser.Scene {
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
-        this.scoreText = this.add.text(0, 16, 'Level 1 Score: '+this.score, { fontSize: '16px', fill: '#CCC' });
-        this.scoreText.setScrollFactor(0);
-        this.platforms = this.physics.add.staticGroup();
+        this.score_setup();
+
+        this.physics.world.bounds.width = 10000;
+        this.physics.world.bounds.height = 800;
 
         // BASE
         // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
+        this.create_platforms();
+        this.create_player();
+        this.create_geysers();
+        this.create_aliens();
+        this.create_portal();
+        this.create_asteroids();
+
+        this.setup_collisions();
+
+        // this.player.body.onWorldBounds = true;
+        // To simulate less greavity
+        // this.player.body.setGravityY(300);
+
+        // Camera-World-Bounds
+        // (x origin, y origin, width, height)
+        this.cameras.main.setBounds(0, 0, 10000, 600);
+        this.cameras.main.startFollow(this.player);
+        // Background scrolls 1/3 to camera
+        this.background.tilePositionX = this.cameras.main.scrollX * .3;
+
+        // Listener for Arrow Key Input
+        this.cursors = this.input.keyboard.createCursorKeys();
+        // Listen for Key press input - only esc key
+        
+        // Listen for Key press input - handles everything else
+        //this.input.keyboard.on('keydown', this.otherKey, this);
+
+        this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
+
+        this.timer = new Timer(this, 0, 0, 5, 4000);
+
+        this.scene.launch("Pause");
+        this.scene.launch("Retry");
+        this.scene.bringToTop(this);
+    }
+
+    globals_setup(num){
+        this.level_num = num;
+        this.sys.game.globals.currentLevel = this;
+        this.sys.game.globals.currentLevelString = "Level"+this.level_num;
+    }
+
+    score_setup(){
+        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.score, { fontSize: '16px', fill: '#CCC' });
+        this.scoreText.setScrollFactor(0);
+    }
+
+    create_asteroids(){
+        //Timer for asteroids
+        this.timedEvent = this.time.addEvent({
+            delay: 5000,
+            callback: this.spawnAsteroid,
+            callbackScope: this,
+            repeat: 999999,
+            startAt: 1
+        });
+    }
+
+    create_platforms(){
+        this.platforms = this.physics.add.staticGroup();
         this.platforms.create(400, 616, 'ground').setScale(3).refreshBody();
         this.platforms.create(1200, 290, 'ground').setScale(1).refreshBody();
         this.platforms.create(1800, 370, 'ground').setScale(1).refreshBody();
@@ -90,25 +152,18 @@ export default class Level1Scene extends Phaser.Scene {
         this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
         this.platforms.create(5900, 525, 'ground').setScale(2, 3).refreshBody();
         this.platforms.create(6700, 450, 'ground').setScale(3).refreshBody();
+    }
 
-        // this.platforms.create(800, 400, 'ground');
-        // this.platforms.create(50, 250, 'ground');
-        // this.platforms.create(950, 220, 'ground');
+    create_aliens(){
+        //setup aliens
+        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
 
+    }
+
+    create_player(){
         this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
-        this.physics.world.bounds.width = 10000;
-        this.physics.world.bounds.height = 800;
         this.player.setCollideWorldBounds(true);
-
-        // this.player.body.onWorldBounds = true;
-        // To simulate less greavity
-        // this.player.body.setGravityY(300);
-
-        this.physics.add.collider(this.player, this.platforms, function(){
-            this.jump_collide();
-        }.bind(this));
-
         //animation creation
         this.anims.create({
             key: 'walk',
@@ -159,37 +214,17 @@ export default class Level1Scene extends Phaser.Scene {
             frameRate: 10,
             repeat: 0
         });
-        
 
-        this.bombs = this.physics.add.group();
-        this.physics.add.collider(this.bombs, this.platforms);
-
-
-        // Camera-World-Bounds
-        // (x origin, y origin, width, height)
-        this.cameras.main.setBounds(0, 0, 10000, 600);
-        this.cameras.main.startFollow(this.player);
-        // Background scrolls 1/3 to camera
-        this.background.tilePositionX = this.cameras.main.scrollX * .3;
-
-        // Listener for Arrow Key Input
-        this.cursors = this.input.keyboard.createCursorKeys();
-        // Listen for Key press input - only esc key
-        
-        // Listen for Key press input - handles everything else
-        //this.input.keyboard.on('keydown', this.otherKey, this);
-
-        this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
-        this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
-
-        //Timer for asteroids
-        this.timedEvent = this.time.addEvent({
-            delay: 5000,
-            callback: this.spawnAsteroid,
-            callbackScope: this,
-            repeat: 999999,
-            startAt: 1
+        this.anims.create({
+            key: 'damage',
+            frames: this.anims.generateFrameNumbers('spaceDog', { start: 4, end: 7 }),
+            frameRate: 10,
+            repeat: 0
         });
+
+    }
+
+    create_geysers(){
 
         this.anims.create({
             key: 'geysers',
@@ -198,54 +233,12 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.timer = new Timer(this, 0, 0, 5, 4000);
-
-
         //setup geyers
         this.geysers.push(this.physics.add.sprite(3000, 200, 'geyser'));
 
-        for (var i=0; i<this.geysers.length; i++){
-            var geyser = this.geysers[i];
-            console.log(geyser);
-            geyser.anims.play('geysers'); //play animation
-            this.physics.add.collider(geyser, this.platforms); //collision with platforms
-            this.physics.add.overlap(this.player, geyser, function () { //collision with player
-                this.jump_collide();
-                this.timer.restart();
-            }.bind(this));
-        }
+    }
 
-
-        //setup aliens
-        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
-
-        for (var i=0; i<this.aliens.length; i++){
-            var alien = this.aliens[i];
-            this.physics.add.collider(alien, this.platforms);
-            alien.setBounce(0.2);
-            alien.setCollideWorldBounds(true);
-            this.alienAnims();
-            alien.anims.play('AlienWalk', true);
-            alien.setVelocityX(100);
-            this.physics.add.collider(this.player, alien, function () { //collision with player
-                this.jump_collide();
-                if (this.bark==3){ //bark is in kill state
-                    alien.play("AlienDying");
-                    setTimeout(() => {
-                        alien.destroy();
-                        this.score+=100;
-                    }, 1000);
-                }
-                else if (this.invincible==false){
-                    alien.setBounce(0.0);
-                    this.invincible = true;
-                    this.timer.pop();
-                    console.log("Hit alien number: "+i);
-                    setTimeout(() =>{ this.invincible=false;}, 2000);
-                }
-            }.bind(this));
-        }
-
+    create_portal(){
 
         this.anims.create({
             key: 'Portal',
@@ -255,8 +248,15 @@ export default class Level1Scene extends Phaser.Scene {
         });
 
         this.portal = this.physics.add.sprite(6000, 400, 'portal');
-        this.physics.add.collider(this.portal, this.platforms);
         this.portal.anims.play('Portal');
+    }
+
+    setup_collisions(){
+
+        //setup collision between portal and platforms
+        this.physics.add.collider(this.portal, this.platforms);
+
+        //setup collision between player and portal
         this.physics.add.overlap(this.player, this.portal, function () {
             if (!this.finished) {
                 this.player.anims.play('disapear');
@@ -271,9 +271,54 @@ export default class Level1Scene extends Phaser.Scene {
             this.finished = true;
         }.bind(this));
 
-        this.scene.launch("Pause");
-        this.scene.launch("Retry");
-        this.scene.bringToTop(this);
+        //player and platform collisions
+        this.physics.add.collider(this.player, this.platforms, function(){
+            this.jump_collide();
+        }.bind(this));
+
+        //geyser collisions
+
+        for (var i=0; i<this.geysers.length; i++){
+            var geyser = this.geysers[i];
+            console.log(geyser);
+            geyser.anims.play('geysers'); //play animation
+            this.physics.add.collider(geyser, this.platforms); //collision with platforms
+            this.physics.add.overlap(this.player, geyser, function () { //collision with player
+                this.jump_collide();
+                this.timer.restart();
+            }.bind(this));
+        }
+
+        //alien collisions
+
+        for (var i=0; i<this.aliens.length; i++){
+            var alien = this.aliens[i];
+            this.physics.add.collider(alien, this.platforms);
+            alien.setBounce(0.2);
+            alien.setCollideWorldBounds(true);
+            this.alienAnims();
+            alien.anims.play('AlienWalk', true);
+            alien.setVelocityX(100);
+            var playerAlienCollider = this.physics.add.collider(this.player, alien, function () { //collision with player
+                this.jump_collide();
+                if (this.bark==3){ //bark is in kill state
+                    alien.play("AlienDying");
+                    playerAlienCollider.destroy();
+                    setTimeout(() => {
+                        alien.destroy();
+                        this.score+=100;
+                    }, 1000);
+                }
+                else if (this.invincible==false){
+                    alien.setBounce(0.0);
+                    this.invincible = true;
+                    this.timer.pop();
+                    this.player.anims.play('damage');
+                    console.log("Hit alien number: "+i);
+                    setTimeout(() =>{ this.invincible=false;}, 1000);
+                }
+            }.bind(this));
+        }
     }
 
     changePlayer() {
@@ -411,7 +456,7 @@ export default class Level1Scene extends Phaser.Scene {
 
     updateScore() {
     
-        this.scoreText.setText("Level 1 Score: "+this.score);
+        this.scoreText.setText("Level "+this.level_num+" Score: "+this.score);
     
     }
 
