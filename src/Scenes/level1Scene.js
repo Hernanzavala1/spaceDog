@@ -11,7 +11,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.aliens = [];
         this.geysers = [];
         this.cursors;
-        this.spacebar;
+        this.shift;
         this.stars;
         this.score = 0;
         this.scoreText;
@@ -461,8 +461,8 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     add_keys(){
+        this.shift = this.input.keyboard.addKey("SHIFT");
         this.spacebar = this.input.keyboard.addKey("SPACE");
-        this.b = this.input.keyboard.addKey("b");
         this.esc = this.input.keyboard.addKey("ESC",true,false);
     }
 
@@ -488,15 +488,15 @@ export default class Level1Scene extends Phaser.Scene {
             }
             this.esc.isDown = false;
             this.gamePaused = false;
-            if (this.spacebar.isDown) {
+            if (this.shift.isDown) {
                 run = true;
             }
 
-            if (this.spacebar.isUp) {
+            if (this.shift.isUp) {
                 run = false;
             }   
 
-            if (this.b.isDown){
+            if (this.spacebar.isDown){
                 if (this.bark==0){
                     this.bark = 3;
                     console.log("Bark!");
@@ -512,7 +512,7 @@ export default class Level1Scene extends Phaser.Scene {
                 }
             }
 
-            if (this.b.isUp){
+            if (this.spacebar.isUp){
                 if (this.bark==1) this.bark--; //set it so bark can be used again
             }
 
