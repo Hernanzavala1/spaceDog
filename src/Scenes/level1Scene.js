@@ -11,6 +11,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.aliens = [];
         this.geysers = [];
         this.cursors;
+        this.cursors2;
         this.shift;
         this.stars;
         this.scoreText;
@@ -96,6 +97,11 @@ export default class Level1Scene extends Phaser.Scene {
 
         // Listener for Arrow Key Input
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors2 = this.input.keyboard.addKeys({
+            up:Phaser.Input.Keyboard.KeyCodes.W,
+            down:Phaser.Input.Keyboard.KeyCodes.S,
+            left:Phaser.Input.Keyboard.KeyCodes.A,
+            right:Phaser.Input.Keyboard.KeyCodes.D});
         // Listen for Key press input - only esc key
         
         // Listen for Key press input - handles everything else
@@ -518,13 +524,13 @@ export default class Level1Scene extends Phaser.Scene {
                 if (this.bark==1) this.bark--; //set it so bark can be used again
             }
 
-            if (this.cursors.up.isDown && !this.crawl && !this.jump) {
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown)&& !this.crawl && !this.jump) {
                 this.player.play('jump', true);
                 this.jump = true;
             }
 
             
-            if (this.cursors.left.isDown) {
+            if (this.cursors.left.isDown || this.cursors2.left.isDown) {
                 if (!this.player.flipX) {
                     this.player.flipX = true;
                 }
@@ -539,7 +545,7 @@ export default class Level1Scene extends Phaser.Scene {
                     }
                 }
             }
-            else if (this.cursors.right.isDown) {
+            else if (this.cursors.right.isDown || this.cursors2.right.isDown) {
                 if (this.player.flipX) {
                     this.player.flipX = false;
                 }
@@ -565,7 +571,7 @@ export default class Level1Scene extends Phaser.Scene {
             }
         }
 
-            if (this.cursors.up.isDown && this.player.body.touching.down) {
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown )&& this.player.body.touching.down) {
                 this.player.setVelocityY(-330);
             }
             this.currentX = this.cameras.main.worldView.x;
