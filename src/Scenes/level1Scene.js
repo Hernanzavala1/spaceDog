@@ -8,7 +8,8 @@ export default class Level1Scene extends Phaser.Scene {
         super('Level1');
         this.platforms;
         this.player;
-        this.alien;
+        this.aliens = [];
+        this.geysers = [];
         this.cursors;
         this.spacebar;
         this.stars;
@@ -27,6 +28,9 @@ export default class Level1Scene extends Phaser.Scene {
         this.duck = false;
         this.crawl = false;
         this.jump = false;
+        this.jumpCount = 0;
+        this.invincible = false;
+        this.bark = 0;
     }
 
     preload() {
@@ -44,9 +48,17 @@ export default class Level1Scene extends Phaser.Scene {
         this.load.image('bubble', 'assets/bubble.png');
         this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.audio('bark', 'assets/bark.mp3');
+        
     }
 
     create() {
+        this.sys.game.globals.currentLevel = this;
+        this.sys.game.globals.currentLevelString = "Level1";
+        this.sound.add('bark');
+
+        this.add_keys();
+        //pause and unpause
         // this.add.image(400, 300, 'sky');
         // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
         // this.background.setOrigin(0, 0);
@@ -55,7 +67,8 @@ export default class Level1Scene extends Phaser.Scene {
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
-        this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
+        this.scoreText = this.add.text(0, 16, 'Level 1 Score: '+this.score, { fontSize: '16px', fill: '#CCC' });
+        this.scoreText.setScrollFactor(0);
         this.platforms = this.physics.add.staticGroup();
 
         // BASE
@@ -72,21 +85,6 @@ export default class Level1Scene extends Phaser.Scene {
         this.platforms.create(3100, 370, 'ground').setScale(1).refreshBody();//1 
         this.platforms.create(3600, 260, 'ground').setScale(1).refreshBody();// 3
         this.platforms.create(3000, 200, 'ground').setScale(1).refreshBody();// 2
-    this.player = this.physics.add.sprite(100, 0, 'spaceDog');
-    this.player.setBounce(0.2);
-    this.physics.world.bounds.width = 10000;
-    this.physics.world.bounds.height = 700;
-    this.player.setCollideWorldBounds(true);
-    
-    this.alien = this.physics.add.sprite(500, 450, 'alien');
-    this.alien.setBounce(0.2);
-    this.alien.setCollideWorldBounds(true);
-    this.alienAnims();
-    this.alien.anims.play('AlienWalk', true);
-    this.alien.setVelocityX(100);   
-    // this.player.body.onWorldBounds = true;
-    // To simulate less greavity
-    // this.player.body.setGravityY(300);
 
         this.platforms.create(4100, 525, 'ground').setScale(3).refreshBody();
         this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
@@ -100,21 +98,16 @@ export default class Level1Scene extends Phaser.Scene {
         this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.physics.world.bounds.width = 10000;
-        this.physics.world.bounds.height = 700;
+        this.physics.world.bounds.height = 800;
         this.player.setCollideWorldBounds(true);
 
-        this.alien = this.physics.add.sprite(500, 450, 'alien');
-        this.alien.setBounce(0.2);
-        this.alien.setCollideWorldBounds(true);
-        this.alienAnims();
-        this.alien.anims.play('AlienWalk', true);
-        this.alien.setVelocityX(100);
         // this.player.body.onWorldBounds = true;
         // To simulate less greavity
         // this.player.body.setGravityY(300);
 
-        this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.alien, this.platforms);
+        this.physics.add.collider(this.player, this.platforms, function(){
+            this.jump_collide();
+        }.bind(this));
 
         //animation creation
         this.anims.create({
@@ -170,7 +163,6 @@ export default class Level1Scene extends Phaser.Scene {
 
         this.bombs = this.physics.add.group();
         this.physics.add.collider(this.bombs, this.platforms);
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
 
         // Camera-World-Bounds
@@ -183,9 +175,9 @@ export default class Level1Scene extends Phaser.Scene {
         // Listener for Arrow Key Input
         this.cursors = this.input.keyboard.createCursorKeys();
         // Listen for Key press input - only esc key
-        this.input.keyboard.on('keyup', this.escOnly, this);
+        
         // Listen for Key press input - handles everything else
-        this.input.keyboard.on('keydown', this.otherKey, this);
+        //this.input.keyboard.on('keydown', this.otherKey, this);
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
@@ -207,8 +199,52 @@ export default class Level1Scene extends Phaser.Scene {
         });
 
         this.timer = new Timer(this, 0, 0, 5, 4000);
-        this.geyser = this.physics.add.sprite(3000, 200, 'geyser');
-        this.geyser.anims.play('geysers');
+
+
+        //setup geyers
+        this.geysers.push(this.physics.add.sprite(3000, 200, 'geyser'));
+
+        for (var i=0; i<this.geysers.length; i++){
+            var geyser = this.geysers[i];
+            console.log(geyser);
+            geyser.anims.play('geysers'); //play animation
+            this.physics.add.collider(geyser, this.platforms); //collision with platforms
+            this.physics.add.overlap(this.player, geyser, function () { //collision with player
+                this.jump_collide();
+                this.timer.restart();
+            }.bind(this));
+        }
+
+
+        //setup aliens
+        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
+
+        for (var i=0; i<this.aliens.length; i++){
+            var alien = this.aliens[i];
+            this.physics.add.collider(alien, this.platforms);
+            alien.setBounce(0.2);
+            alien.setCollideWorldBounds(true);
+            this.alienAnims();
+            alien.anims.play('AlienWalk', true);
+            alien.setVelocityX(100);
+            this.physics.add.collider(this.player, alien, function () { //collision with player
+                this.jump_collide();
+                if (this.bark==3){ //bark is in kill state
+                    alien.play("AlienDying");
+                    setTimeout(() => {
+                        alien.destroy();
+                        this.score+=100;
+                    }, 1000);
+                }
+                else if (this.invincible==false){
+                    alien.setBounce(0.0);
+                    this.invincible = true;
+                    this.timer.pop();
+                    console.log("Hit alien number: "+i);
+                    setTimeout(() =>{ this.invincible=false;}, 2000);
+                }
+            }.bind(this));
+        }
 
 
         this.anims.create({
@@ -225,7 +261,7 @@ export default class Level1Scene extends Phaser.Scene {
             if (!this.finished) {
                 this.player.anims.play('disapear');
                 setTimeout(() => {
-                    var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#6d206e' });
+                    var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#CCC' });
                     won.setOrigin(.5);
                     this.physics.pause();
                 }, 100);
@@ -235,19 +271,13 @@ export default class Level1Scene extends Phaser.Scene {
             this.finished = true;
         }.bind(this));
 
-
-        // this.physics.add.overlap(this.player, this.portal, portalReached.bind(this));
-        this.physics.add.collider(this.geyser, this.platforms);
-        this.physics.add.overlap(this.player, this.geyser, function () {
-            this.timer.restart();
-        }.bind(this));
-
-
+        this.scene.launch("Pause");
+        this.scene.launch("Retry");
+        this.scene.bringToTop(this);
     }
 
     changePlayer() {
         if (!this.duck && !this.crawl) {
-            console.log("got here");
             this.duck = true;
             this.player.play('duck', true);
             setTimeout(() => {
@@ -282,6 +312,13 @@ export default class Level1Scene extends Phaser.Scene {
             frameRate: 8,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'AlienDying',
+            frames: this.anims.generateFrameNumbers('alien', { start: 8, end: 12 }),
+            frameRate: 10,
+            repeat: 0
+        });
     }
 
     onEvent() {
@@ -289,61 +326,26 @@ export default class Level1Scene extends Phaser.Scene {
         // console.log(this.cameras.main.worldView.x);
         // console.log(this.cameras.main.worldView.x + 800);
     }
-    escOnly(event) {
-        let code = event.keyCode;
-        if (code == 27 && this.gamePaused == false) {
+    escOnly() {
+        if (this.gamePaused == false) {
+            this.gamePaused = true;
             console.log("ESC + game not paused");
             // console.log("game paused? " + this.gamePaused);
             //Have to check if game over or not 
-            console.log(this.currentX);
-            this.createPauseScreen();
-            this.togglePauseScreen(true);
-            this.startPause();
-        }else if(code == 27 && this.gamePaused == true){
-            console.log("ESC + game paused");
-            this.togglePauseScreen(false);
-            this.endPause();
+            this.do_pause();
         }
+        else console.log("ESC + game paused");
+
     }
     // Start Pause - Player stop moving, Sprite stop moving, Sprites stop spawning
-    startPause(){
+    do_pause(){
         console.log('Start Pause');
-        // this.scene.pause();
-        this.physics.pause();
-        this.timedEvent.paused = true;
-    }
-    // End Pause - Player moving, Sprite moving, Sprites spawning
-    endPause(){
-        console.log('End Pause');
-        // this.scene.resume();
-        this.physics.resume();
-        this.timedEvent.paused = false;
-    }
-    createPauseScreen() {
-        console.log('Create Pause Screen');
-        this.veil = this.add.graphics({ x: 0, y: 0 });
-        // this.veil.fillStyle('#6d206e', 0.75);
-        // Trouble making veil purple
-        this.veil.fillStyle('#6d206e', 0.5);
-        this.veil.fillRect(0, 0, config.width, config.height);
-        // this.veil.setDepth(5);
-        this.veil.setScrollFactor(0);
-
-        // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
-        // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
-        this.txt_pause = this.add.text(this.currentX + 400, 200, 'Pause', {fontSize: '56px', fill: '#6d206e'});
-        this.txt_pause.setOrigin(.5);
-
-        // this.txt_pause.setDepth(5);
-        // this.txt_pause.setScrollFactor(0);
+        //this.physics.pause();
+        this.scene.pause();
+        this.scene.resume("Pause");
+        this.scene.bringToTop(this.scene.get('Pause'));
     }
     
-    togglePauseScreen(is_visible) {
-        console.log('Paused');
-        this.veil.setVisible(is_visible);
-        this.txt_pause.setVisible(is_visible);
-        this.gamePaused = is_visible;
-    }
     otherKey(event){
         // console.log("other event");
         // console.log(event.keyCode)
@@ -369,7 +371,7 @@ export default class Level1Scene extends Phaser.Scene {
             this.dead = true;
         }
     }
-    createGameOverScreen() {
+    createGameOverScreen(msg) {
         console.log('Create Game Over');
         this.veil = this.add.graphics({ x: 0, y: 0 });
         // this.veil.fillStyle('#6d206e', 0.75);
@@ -381,17 +383,21 @@ export default class Level1Scene extends Phaser.Scene {
         
         // this.scoreText = this.add.text(16, 16, 'Level 2', { fontSize: '32px', fill: '#000' });
         // this.txt_pause = new Text(this, 400, 200, 'Pause', 'title');
-        this.txt_pause = this.add.text(this.currentX + 400, 200, 'You Died!', {fontSize: '56px', fill: '#6d206e'});
+        var font_size = 1000/msg.length
+        font_size = `${font_size}px`
+        this.txt_pause = this.add.text(this.currentX + 400, 200, msg, {fontSize: font_size, fill: '#CCC'});
         this.txt_pause.setOrigin(.5);
 
         // this.txt_pause.setDepth(5);
         // this.txt_pause.setScrollFactor(0);
     }
-    triggerGameOver() {
+    triggerGameOver(msg) {
         console.log('Trigger Game Over');
-        this.createGameOverScreen();
-        this.physics.pause();
-        this.timedEvent.paused = true;
+        this.sys.game.globals.deathMsg = msg;
+        console.log(this.sys.game.globals.deathMsg);
+        this.scene.pause();
+        this.scene.resume("Retry");
+        this.scene.bringToTop(this.scene.get('Retry'));
     }
 
 
@@ -403,11 +409,40 @@ export default class Level1Scene extends Phaser.Scene {
     //     star.disableBody(true, true);
     // }
 
+    updateScore() {
+    
+        this.scoreText.setText("Level 1 Score: "+this.score);
+    
+    }
+
+    add_keys(){
+        this.spacebar = this.input.keyboard.addKey("SPACE");
+        this.b = this.input.keyboard.addKey("b");
+        this.esc = this.input.keyboard.addKey("ESC",true,false);
+    }
+
+    jump_collide(){
+        setTimeout(() => {
+            this.jumpLock = !this.jumpLock;
+        }, 80);
+        if (!this.jumpLock){
+            this.jump = false;
+            this.jumpLock = true;
+        } 
+
+    }
+
 
     update() {
-        this.spacebar = this.input.keyboard.addKey("SPACE");
+        this.updateScore();
         var run = false;
         if (!this.finished) {
+
+            if (this.esc.isDown && this.gamePaused==false){
+                this.escOnly();
+            }
+            this.esc.isDown = false;
+            this.gamePaused = false;
             if (this.spacebar.isDown) {
                 run = true;
             }
@@ -416,28 +451,45 @@ export default class Level1Scene extends Phaser.Scene {
                 run = false;
             }   
 
+            if (this.b.isDown){
+                if (this.bark==0){
+                    this.bark = 3;
+                    console.log("Bark!");
+                    this.sound.play('bark');
+                    setTimeout(()=>{
+                        console.log("End bark");
+                        this.bark--; //bark will kill
+                        setTimeout(()=>{
+                            console.log("Bark cooldown over");
+                            this.bark--; //bark is now cooling down
+                        },500); //make this time to wait until you can bark again (cooldown)
+                    },270); //make this length of bark animation
+                }
+            }
+
+            if (this.b.isUp){
+                if (this.bark==1) this.bark--; //set it so bark can be used again
+            }
+
             if (this.cursors.up.isDown && !this.crawl && !this.jump) {
                 this.player.play('jump', true);
                 this.jump = true;
             }
 
-            else if (this.cursors.up.isUp && this.jump) {
-                if (this.player.collider)
-                this.jump = false;
-            }
-
-            if (!this.jump) {
+            
             if (this.cursors.left.isDown) {
                 if (!this.player.flipX) {
                     this.player.flipX = true;
                 }
                 if (!this.duck) {
-                if (run) this.player.setVelocityX(-600);
-                else this.player.setVelocityX(-200);
+                    if (run) this.player.setVelocityX(-600);
+                    else this.player.setVelocityX(-200);
                 
-                if (this.crawl) this.player.anims.play('crawl', true);
-                else if (run) this.player.anims.play('run', true);
-                else this.player.anims.play('walk', true);
+                    if (!this.jump) {
+                        if (this.crawl) this.player.anims.play('crawl', true);
+                        else if (run) this.player.anims.play('run', true);
+                        else this.player.anims.play('walk', true);
+                    }
                 }
             }
             else if (this.cursors.right.isDown) {
@@ -446,19 +498,23 @@ export default class Level1Scene extends Phaser.Scene {
                 }
 
                 if (!this.duck) {
-                if (run) this.player.setVelocityX(600);
-                else this.player.setVelocityX(200);
+                    if (run) this.player.setVelocityX(600);
+                    else this.player.setVelocityX(200);
                 
 
-                if (this.crawl) this.player.anims.play('crawl', true);
-                else if (run) this.player.anims.play('run', true);
-                else this.player.anims.play('walk', true);
+                    if (!this.jump) {
+                        if (this.crawl) this.player.anims.play('crawl', true);
+                        else if (run) this.player.anims.play('run', true);
+                        else this.player.anims.play('walk', true);
+                    }
                 }
             }
             else {
                 this.player.setVelocityX(0);
 
-                if (!this.duck || !this.jump) this.player.anims.pause();
+                if (!this.jump && !this.crawl) this.player.play("walk");
+
+                if (!this.duck) this.player.anims.pause();
             }
         }
 
@@ -467,16 +523,21 @@ export default class Level1Scene extends Phaser.Scene {
             }
             this.currentX = this.cameras.main.worldView.x;
             if (this.dead) {
-                this.triggerGameOver();
+                this.triggerGameOver("You got hit by a meteor, ouch!");
+                this.scene.pause();
+                return;
+            }
+            if (this.timer.expired){
+                this.triggerGameOver("You ran out of air!");
+                this.scene.pause();
+                return;
+            }
+
+            if (this.player.y > 700){
+                this.triggerGameOver("You fell to your death :(");
                 this.scene.pause();
                 return;
             }
 
         }
-        else {
-
-        }
-    }
-
-
-};
+    };

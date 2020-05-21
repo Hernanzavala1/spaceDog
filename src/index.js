@@ -4,8 +4,10 @@ import GameScene from './Scenes/GameScene';
 import BootScene from './Scenes/BootScene';
 import PreloaderScene from './Scenes/PreloaderScene';
 import TitleScene from './Scenes/TitleScene';
+import PauseScene from './Scenes/PauseScene';
 import OptionsScene from './Scenes/OptionsScene';
 import CreditsScene from './Scenes/CreditsScene';
+import RetryScene from './Scenes/RetryScene';
 import Model from './Model';
 import LevelScene from './Scenes/LevelScene';
 import Level1Scene from './Scenes/Level1Scene';
@@ -16,11 +18,13 @@ class Game extends Phaser.Game {
   constructor () {
     super(config);
     const model = new Model();
-    this.globals = { model, bgMusic: null };
+    this.globals = { model, bgMusic: null, currentLevel: null, currentLevelString: "", deathMsg:""};
     this.scene.add('Boot', BootScene);
     this.scene.add('Preloader', PreloaderScene);
     this.scene.add('Title', TitleScene);
     this.scene.add('Options', OptionsScene);
+    this.scene.add('Pause', PauseScene);
+    this.scene.add('Retry', RetryScene);
     this.scene.add('Credits', CreditsScene);
     this.scene.add('Game', GameScene);
     this.scene.add('Level', LevelScene);
