@@ -13,7 +13,6 @@ export default class Level1Scene extends Phaser.Scene {
         this.cursors;
         this.shift;
         this.stars;
-        this.score = 0;
         this.scoreText;
         this.bombs;
         this.background;
@@ -109,6 +108,7 @@ export default class Level1Scene extends Phaser.Scene {
 
         this.scene.launch("Pause");
         this.scene.launch("Retry");
+        this.scene.launch("Win");
         this.scene.bringToTop(this);
     }
 
@@ -116,10 +116,12 @@ export default class Level1Scene extends Phaser.Scene {
         this.level_num = num;
         this.sys.game.globals.currentLevel = this;
         this.sys.game.globals.currentLevelString = "Level"+this.level_num;
+        
     }
 
     score_setup(){
-        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.score, { fontSize: '16px', fill: '#CCC' });
+        this.sys.game.globals.score = 0;
+        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.sys.game.globals.score, { fontSize: '16px', fill: '#CCC' });
         this.scoreText.setScrollFactor(0);
     }
 
@@ -261,9 +263,9 @@ export default class Level1Scene extends Phaser.Scene {
             if (!this.finished) {
                 this.player.anims.play('disapear');
                 setTimeout(() => {
-                    var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#CCC' });
-                    won.setOrigin(.5);
-                    this.physics.pause();
+                    this.scene.pause();
+                    this.scene.resume("Win");
+                    this.scene.bringToTop(this.scene.get('Win'));
                 }, 100);
 
 
@@ -306,7 +308,7 @@ export default class Level1Scene extends Phaser.Scene {
                     playerAlienCollider.destroy();
                     setTimeout(() => {
                         alien.destroy();
-                        this.score+=100;
+                        this.sys.game.globals.score+=100;
                     }, 1000);
                 }
                 else if (this.invincible==false){
@@ -456,7 +458,7 @@ export default class Level1Scene extends Phaser.Scene {
 
     updateScore() {
     
-        this.scoreText.setText("Level "+this.level_num+" Score: "+this.score);
+        this.scoreText.setText("Level "+this.level_num+" Score: "+this.sys.game.globals.score);
     
     }
 

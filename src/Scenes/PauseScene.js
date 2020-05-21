@@ -13,14 +13,18 @@ export default class PauseScene extends Phaser.Scene {
     this.load.image('retryph', 'assets/ui/RetryButton/RetryButton_Hovered.png');
     this.load.image('resumep', 'assets/ui/ResumeButton/ResumeButton.png');
     this.load.image('resumeph', 'assets/ui/ResumeButton/ResumeButton_Hovered.png');
+    this.load.image('levelp', 'assets/ui/MainMenuButton/MainMenuButton.png');
+    this.load.image('levelph', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
   }
 
   create () {
     this.escP = this.input.keyboard.addKey("ESC",true,false);
-    this.retry = new Button(this, 400, config.height/2, 'retryp', 'retryph', '', '', false,true);
-    this.resume = new Button(this, 400, config.height/2 + 100, 'resumep', 'resumeph', '', '',true);
+    this.retry = new Button(this, 400, config.height/2 + 100, 'retryp', 'retryph', '', '', false,true);
+    this.resume = new Button(this, 400, config.height/2, 'resumep', 'resumeph', '', '',true);
+    this.level_select = new Button(this, 400, config.height/2 + 200, 'levelp', 'levelph', '','Title');
     this.retry.setScrollFactor(0);
     this.resume.setScrollFactor(0);
+    this.level_select.setScrollFactor(0);
     this.createPauseScreen();
   }
 

@@ -38,7 +38,24 @@ export default class Button extends Phaser.GameObjects.Container {
           this.scene.scene.start("Level3");
         }
       }
-      else this.scene.scene.start(targetScene);
+      else{
+        if (this.scene.sys.game.globals.currentLevel){
+          this.scene.scene.remove(this.scene.sys.game.globals.currentLevelString);
+          if (this.scene.sys.game.globals.currentLevelString==="Level1"){
+            this.scene.scene.add('Level1', Level1Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level2"){
+            this.scene.scene.add('Level2', Level2Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level3"){
+            this.scene.scene.add('Level3', Level3Scene);
+          }
+        }
+        
+        console.log("Changing scene");
+        this.scene.scene.start(targetScene);
+        this.scene.scene.bringToTop(targetScene);
+      } 
     }.bind(this));
 
     this.button.on('pointerover', function () {
