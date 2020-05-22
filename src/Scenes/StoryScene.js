@@ -37,7 +37,6 @@ export default class WinScene extends Phaser.Scene {
   }
 
   update_text(msg){
-    console.log(msg);
     var font_size = 1000/msg.length;
     this.txt_pause.setFontSize(font_size);
     this.txt_pause.setText(msg);

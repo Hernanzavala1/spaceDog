@@ -108,7 +108,9 @@ export default class Level1Scene extends Phaser.Scene {
         //this.input.keyboard.on('keydown', this.otherKey, this);
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keydown-' + "S", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
         this.timer = new Timer(this, 400, 0, 5, 4000);
 
