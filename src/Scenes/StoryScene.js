@@ -23,9 +23,10 @@ export default class WinScene extends Phaser.Scene {
   }
 
   update () {
-    if (this.spacebar.isDown && this.scene.isPaused(this.sys.game.globals.currentLevelString)){
+    if (this.spacebar.isDown && this.scene.isPaused(this.sys.game.globals.currentLevelString) && this.scene.isPaused("Win")){
       this.scene.resume(this.sys.game.globals.currentLevel);
       this.scene.bringToTop(this.sys.game.globals.currentLevel);
+      this.scene.pause();
     }
     if (this.sys.game.globals.currentLevelString=="Level1") this.update_text(this.l1);
     if (this.sys.game.globals.currentLevelString=="Level2") this.update_text(this.l2);

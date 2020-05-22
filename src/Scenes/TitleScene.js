@@ -11,13 +11,13 @@ export default class TitleScene extends Phaser.Scene {
   }
 
   preload(){
-    this.load.image('mainmenu', 'assets/ui/MainMenu.png');
-    this.load.image('start', 'assets/ui/StartButton/StartButton.png');
-    this.load.image('start_hover', 'assets/ui/StartButton/StartButton_Hovered.png');
-    this.load.image('controls', 'assets/ui/ControlButton/ControlButton.png');
-    this.load.image('controls_hover', 'assets/ui/ControlButton/ControlButton_Hovered.png');
-    this.load.image('help', 'assets/ui/HelpButton/HelpButton.png');
-    this.load.image('help_hover', 'assets/ui/HelpButton/HelpButton_Hovered.png');
+    // this.load.image('mainmenu', 'assets/ui/MainMenu.png');
+    // this.load.image('start', 'assets/ui/StartButton/StartButton.png');
+    // this.load.image('start_hover', 'assets/ui/StartButton/StartButton_Hovered.png');
+    // this.load.image('controls', 'assets/ui/ControlButton/ControlButton.png');
+    // this.load.image('controls_hover', 'assets/ui/ControlButton/ControlButton_Hovered.png');
+    // this.load.image('help', 'assets/ui/HelpButton/HelpButton.png');
+    // this.load.image('help_hover', 'assets/ui/HelpButton/HelpButton_Hovered.png');
   }
 
   create () {

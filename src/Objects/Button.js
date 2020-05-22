@@ -2,6 +2,7 @@ import 'phaser';
 import Level1Scene from '../Scenes/Level1Scene';
 import Level2Scene from '../Scenes/Level2Scene';
 import Level3Scene from '../Scenes/Level3Scene';
+import Level4Scene from '../Scenes/Level4Scene';
 
 export default class Button extends Phaser.GameObjects.Container {
   constructor(scene, x, y, key1, key2, text, targetScene,resume,restart) {
@@ -74,7 +75,10 @@ export default class Button extends Phaser.GameObjects.Container {
             this.scene.scene.add('Level6', Level6Scene);
           }
         }
-        
+
+        this.scene.scene.pause("Retry");
+        this.scene.scene.pause("Pause");
+        this.scene.scene.pause("Win");
         console.log("Changing scene");
         this.scene.scene.start(targetScene);
         this.scene.scene.bringToTop(targetScene);

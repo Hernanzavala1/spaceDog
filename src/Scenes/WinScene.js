@@ -8,8 +8,8 @@ export default class WinScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('levelm', 'assets/ui/MainMenuButton/MainMenuButton.png');
-    this.load.image('levelmh', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
+    // this.load.image('levelm', 'assets/ui/MainMenuButton/MainMenuButton.png');
+    // this.load.image('levelmh', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
   }
 
   create () {

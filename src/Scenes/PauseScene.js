@@ -9,12 +9,12 @@ export default class PauseScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('retryp', 'assets/ui/RetryButton/RetryButton.png');
-    this.load.image('retryph', 'assets/ui/RetryButton/RetryButton_Hovered.png');
-    this.load.image('resumep', 'assets/ui/ResumeButton/ResumeButton.png');
-    this.load.image('resumeph', 'assets/ui/ResumeButton/ResumeButton_Hovered.png');
-    this.load.image('levelp', 'assets/ui/MainMenuButton/MainMenuButton.png');
-    this.load.image('levelph', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
+    // this.load.image('retryp', 'assets/ui/RetryButton/RetryButton.png');
+    // this.load.image('retryph', 'assets/ui/RetryButton/RetryButton_Hovered.png');
+    // this.load.image('resumep', 'assets/ui/ResumeButton/ResumeButton.png');
+    // this.load.image('resumeph', 'assets/ui/ResumeButton/ResumeButton_Hovered.png');
+    // this.load.image('levelp', 'assets/ui/MainMenuButton/MainMenuButton.png');
+    // this.load.image('levelph', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
   }
 
   create () {
