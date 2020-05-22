@@ -9,6 +9,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.platforms;
         this.player;
         this.aliens = [];
+        this.alien_collisons = [];
         this.geysers = [];
         this.cursors;
         this.cursors2;
@@ -77,6 +78,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.create_player();
         this.create_geysers();
         this.create_aliens();
+        this.create_walls();
         this.create_portal();
 
         this.score_setup();
@@ -111,7 +113,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
-        this.timer = new Timer(this, 400, 0, 5, 4000);
+        this.timer = new Timer(this, 400, 0, 5, 6000);
 
         this.scene.launch("Pause");
         this.scene.pause("Pause");
@@ -181,9 +183,35 @@ export default class Level1Scene extends Phaser.Scene {
         this.platforms.create(9381.5, 512.5, 'ground').setScale(0.6275, 9.53125).refreshBody();
     }
 
+    create_walls(){
+        this.walls = this.physics.add.staticGroup();
+        this.walls.create(4514.42, 319.17, 'bomb');
+        this.walls.create(5145.42, 761, 'bomb');
+        this.walls.create(5276.42, 319.17, 'bomb');
+        this.walls.create(5283.42, 529, 'bomb');
+        this.walls.create(5519.42, 529, 'bomb');
+        this.walls.create(6239.42, 335, 'bomb');
+        this.walls.create(6653.42, 335, 'bomb');
+        this.walls.create(6910.93, 582.53, 'bomb');
+        this.walls.create(6938.42, 373, 'bomb');
+        this.walls.create(7552.42, 373, 'bomb');
+        this.walls.create(7660.95, 582.53, 'bomb');
+        this.walls.create(9513.95, 757.53, 'bomb');  
+    }
+
     create_aliens(){
         //setup aliens
-        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
+        this.aliens.push(this.physics.add.sprite(1747.42, 720, 'alien'));
+        this.aliens.push(this.physics.add.sprite(2685.42, 720, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3720.42, 706, 'alien'));
+        this.aliens.push(this.physics.add.sprite(4639.42, 278.75, 'alien'));
+        this.aliens.push(this.physics.add.sprite(5170.42, 278.25, 'alien'));
+        this.aliens.push(this.physics.add.sprite(5414.42, 487.81, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6264.42, 720, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6454.42, 293.17, 'alien'));
+        this.aliens.push(this.physics.add.sprite(7040.42, 542.95, 'alien'));
+        this.aliens.push(this.physics.add.sprite(7102.83, 328.91, 'alien'));
+        this.aliens.push(this.physics.add.sprite(8446.42, 720, 'alien'));
 
     }
 
@@ -261,7 +289,10 @@ export default class Level1Scene extends Phaser.Scene {
         });
 
         //setup geyers
-        this.geysers.push(this.physics.add.sprite(3000, 200, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(1330,519, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(4281,548, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(6630,679, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(7920,484, 'geyser'));
 
     }
 
@@ -274,7 +305,7 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.portal = this.physics.add.sprite(9443, 767, 'portal');
+        this.portal = this.physics.add.sprite(9443, 150, 'portal');
         this.portal.anims.play('Portal');
     }
 
@@ -328,11 +359,13 @@ export default class Level1Scene extends Phaser.Scene {
             this.alienAnims();
             alien.anims.play('AlienWalk', true);
             alien.setVelocityX(100);
-            var playerAlienCollider = this.physics.add.collider(this.player, alien, function () { //collision with player
+            
+            alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
+                console.log(alien);
                 this.jump_collide();
                 if (this.bark==3){ //bark is in kill state
                     alien.play("AlienDying");
-                    playerAlienCollider.destroy();
+                    alien.collider_player.destroy();
                     setTimeout(() => {
                         alien.destroy();
                         this.sys.game.globals.score+=100;

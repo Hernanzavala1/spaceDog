@@ -7,14 +7,13 @@ export default class Level2Scene extends Phaser.Scene {
     constructor() {
         super('Level2');
         this.platforms;
-        this.walls;
         this.player;
         this.aliens = [];
         this.geysers = [];
         this.cursors;
-        this.spacebar;
+        this.cursors2;
+        this.shift;
         this.stars;
-        this.score = 0;
         this.scoreText;
         this.bombs;
         this.background;
@@ -59,12 +58,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.globals_setup(2);
 
         this.add_keys();
-        //pause and unpause
-        // this.add.image(400, 300, 'sky');
-        // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
-        // this.background.setOrigin(0, 0);
-        // this.background.setScrollFactor(0);
-        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level2Background');
+        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level1Background');
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
@@ -75,7 +69,6 @@ export default class Level2Scene extends Phaser.Scene {
 
         // BASE
         this.create_platforms();
-        this.create_walls();
         this.create_player();
         this.create_geysers();
         this.create_aliens();
@@ -84,47 +77,62 @@ export default class Level2Scene extends Phaser.Scene {
 
         this.setup_collisions();
 
-        // this.player.body.onWorldBounds = true;
-        // To simulate less greavity
-        // this.player.body.setGravityY(300);
-
         // Camera-World-Bounds
         // (x origin, y origin, width, height)
         this.cameras.main.setBounds(0, 0, 10000, 800);
         this.cameras.main.startFollow(this.player);
-        // this.cameras.main.shake(10000000);
         // Background scrolls 1/3 to camera
         this.background.tilePositionX = this.cameras.main.scrollX * .3;
 
         // Listener for Arrow Key Input
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors2 = this.input.keyboard.addKeys({
+            up:Phaser.Input.Keyboard.KeyCodes.W,
+            down:Phaser.Input.Keyboard.KeyCodes.S,
+            left:Phaser.Input.Keyboard.KeyCodes.A,
+            right:Phaser.Input.Keyboard.KeyCodes.D});
         // Listen for Key press input - only esc key
-
+        
         // Listen for Key press input - handles everything else
         //this.input.keyboard.on('keydown', this.otherKey, this);
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keydown-' + "S", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
-        this.timer = new Timer(this, 0, 0, 5, 4000);
+        this.timer = new Timer(this, 400, 0, 5, 4000);
 
         this.scene.launch("Pause");
+        this.scene.pause("Pause");
         this.scene.launch("Retry");
+        this.scene.pause("Retry");
+        this.scene.launch("Win");
+        this.scene.pause("Win");
+        this.scene.launch("Story");
         this.scene.bringToTop(this);
+        this.do_story();
     }
 
-    globals_setup(num) {
+    do_story(){
+        this.scene.pause();
+        this.scene.bringToTop(this.scene.get('Story'));
+    }
+
+    globals_setup(num){
         this.level_num = num;
         this.sys.game.globals.currentLevel = this;
-        this.sys.game.globals.currentLevelString = "Level" + this.level_num;
+        this.sys.game.globals.currentLevelString = "Level"+this.level_num;
+        
     }
 
-    score_setup() {
-        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.score, { fontSize: '16px', fill: '#CCC' });
+    score_setup(){
+        this.sys.game.globals.score = 0;
+        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.sys.game.globals.score, { fontSize: '16px', fill: '#CCC' });
         this.scoreText.setScrollFactor(0);
     }
 
-    create_asteroids() {
+    create_asteroids(){
         //Timer for asteroids
         this.timedEvent = this.time.addEvent({
             delay: 5000,
@@ -280,12 +288,14 @@ export default class Level2Scene extends Phaser.Scene {
         //setup collision between player and portal
         this.physics.add.overlap(this.player, this.portal, function () {
             if (!this.finished) {
+                this.physics.pause();
                 this.player.anims.play('disapear');
                 setTimeout(() => {
-                    var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#CCC' });
-                    won.setOrigin(.5);
-                    this.physics.pause();
-                }, 100);
+                    this.physics.resume();
+                    this.scene.pause();
+                    this.scene.resume("Win");
+                    this.scene.bringToTop(this.scene.get('Win'));
+                }, 1000);
 
 
             }
@@ -310,32 +320,40 @@ export default class Level2Scene extends Phaser.Scene {
         }
 
         //alien collisions
-        for (var i = 0; i < this.aliens.length; i++) {
+        for (var i=0; i<this.aliens.length; i++){
             var alien = this.aliens[i];
-            var xSpeed = 100;
-            this.physics.add.collider(alien, this.platforms); //colides with platforms
+            this.physics.add.collider(alien, this.platforms);
             alien.setBounce(0.2);
-            alien.setCollideWorldBounds(true); //does not fall through world
+            alien.setCollideWorldBounds(true);
             this.alienAnims();
             alien.anims.play('AlienWalk', true);
-            alien.setVelocityX(xSpeed);
-            var playerAlienCollider = this.physics.add.collider(this.player, alien, function () { //collision with player
+            alien.setVelocityX(100);
+            alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
                 this.jump_collide();
-                if (this.bark == 3) { //bark is in kill state
+                if (this.bark==3){ //bark is in kill state
                     alien.play("AlienDying");
-                    playerAlienCollider.destroy();
+                    alien.collider_player.destroy();
                     setTimeout(() => {
                         alien.destroy();
-                        this.score += 100;
+                        this.sys.game.globals.score+=100;
                     }, 1000);
                 }
-                else if (this.invincible == false) {
+                else if (this.invincible==false){
                     alien.setBounce(0.0);
                     this.invincible = true;
                     this.timer.pop();
-                    this.player.anims.play('damage');
-                    console.log("Hit alien number: " + i);
-                    setTimeout(() => { this.invincible = false; }, 1000);
+                    //this.player.anims.play('damage');
+                    console.log("Hit alien number: "+i);
+                    var time = 166;
+                    for (var i=0; i<6; i+=2){
+                        setTimeout(()=>{
+                            this.player.setAlpha(0.5);
+                        },i*time);
+                        setTimeout(()=>{
+                            this.player.setAlpha(1);
+                        },(i+1)*time);
+                    }
+                    setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
             }.bind(this));
 
@@ -478,14 +496,14 @@ export default class Level2Scene extends Phaser.Scene {
 
     updateScore() {
 
-        this.scoreText.setText("Level " + this.level_num + " Score: " + this.score);
+        this.scoreText.setText("Level " + this.level_num + " Score: " + this.sys.game.globals.score);
 
     }
 
     add_keys() {
+        this.shift = this.input.keyboard.addKey("SHIFT");
         this.spacebar = this.input.keyboard.addKey("SPACE");
-        this.b = this.input.keyboard.addKey("b");
-        this.esc = this.input.keyboard.addKey("ESC", true, false);
+        this.esc = this.input.keyboard.addKey("ESC",true,false);
     }
 
     jump_collide() {
@@ -504,60 +522,70 @@ export default class Level2Scene extends Phaser.Scene {
         this.updateScore();
         var run = false;
         if (!this.finished) {
-            if (this.esc.isDown && this.gamePaused == false) {
+
+            if (this.esc.isDown && this.gamePaused==false){
                 this.escOnly();
             }
             this.esc.isDown = false;
             this.gamePaused = false;
-            if (this.spacebar.isDown) {
+            if (this.shift.isDown) {
                 run = true;
             }
-            if (this.spacebar.isUp) {
+
+            if (this.shift.isUp) {
                 run = false;
-            }
-            if (this.b.isDown) {
-                if (this.bark == 0) {
+            }   
+
+            if (this.spacebar.isDown){
+                if (this.bark==0){
                     this.bark = 3;
                     console.log("Bark!");
                     this.sound.play('bark');
-                    setTimeout(() => {
+                    setTimeout(()=>{
                         console.log("End bark");
                         this.bark--; //bark will kill
-                        setTimeout(() => {
+                        setTimeout(()=>{
                             console.log("Bark cooldown over");
                             this.bark--; //bark is now cooling down
-                        }, 500); //make this time to wait until you can bark again (cooldown)
-                    }, 270); //make this length of bark animation
+                        },500); //make this time to wait until you can bark again (cooldown)
+                    },270); //make this length of bark animation
                 }
             }
-            if (this.b.isUp) {
-                if (this.bark == 1) this.bark--; //set it so bark can be used again
+
+            if (this.spacebar.isUp){
+                if (this.bark==1) this.bark--; //set it so bark can be used again
             }
-            if (this.cursors.up.isDown && !this.crawl && !this.jump) {
+
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown)&& !this.crawl && !this.jump) {
                 this.player.play('jump', true);
                 this.jump = true;
             }
-            if (this.cursors.left.isDown) {
+
+            
+            if (this.cursors.left.isDown || this.cursors2.left.isDown) {
                 if (!this.player.flipX) {
                     this.player.flipX = true;
                 }
                 if (!this.duck) {
                     if (run) this.player.setVelocityX(-600);
                     else this.player.setVelocityX(-200);
-
+                
                     if (!this.jump) {
                         if (this.crawl) this.player.anims.play('crawl', true);
                         else if (run) this.player.anims.play('run', true);
                         else this.player.anims.play('walk', true);
                     }
                 }
-            } else if (this.cursors.right.isDown) {
+            }
+            else if (this.cursors.right.isDown || this.cursors2.right.isDown) {
                 if (this.player.flipX) {
                     this.player.flipX = false;
                 }
+
                 if (!this.duck) {
                     if (run) this.player.setVelocityX(600);
                     else this.player.setVelocityX(200);
+                
 
                     if (!this.jump) {
                         if (this.crawl) this.player.anims.play('crawl', true);
@@ -565,7 +593,8 @@ export default class Level2Scene extends Phaser.Scene {
                         else this.player.anims.play('walk', true);
                     }
                 }
-            } else {
+            }
+            else {
                 this.player.setVelocityX(0);
 
                 if (!this.jump && !this.crawl) this.player.play("walk");
@@ -574,26 +603,26 @@ export default class Level2Scene extends Phaser.Scene {
             }
         }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down) {
-            this.player.setVelocityY(-330);
-        }
-        this.currentX = this.cameras.main.worldView.x;
-        if (this.dead) {
-            this.triggerGameOver("You got hit by a meteor, ouch!");
-            this.scene.pause();
-            return;
-        }
-        if (this.timer.expired) {
-            this.triggerGameOver("You ran out of air!");
-            this.scene.pause();
-            return;
-        }
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown )&& this.player.body.touching.down) {
+                this.player.setVelocityY(-330);
+            }
+            this.currentX = this.cameras.main.worldView.x;
+            if (this.dead) {
+                this.triggerGameOver("You got hit by a meteor, ouch!");
+                this.scene.pause();
+                return;
+            }
+            if (this.timer.expired){
+                this.triggerGameOver("You ran out of air!");
+                this.scene.pause();
+                return;
+            }
 
-        if (this.player.y > 900) {
-            this.triggerGameOver("You fell to your death :(");
-            this.scene.pause();
-            return;
-        }
+            if (this.player.y > 900){
+                this.triggerGameOver("You fell to your death :(");
+                this.scene.pause();
+                return;
+            }
 
-    }
-};
+        }
+    };
