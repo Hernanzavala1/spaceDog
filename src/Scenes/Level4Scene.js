@@ -93,6 +93,7 @@ export default class Level1Scene extends Phaser.Scene {
         // (x origin, y origin, width, height)
         this.cameras.main.setBounds(0, 0, 10000, 800);
         this.cameras.main.startFollow(this.player);
+        this.cameras.main.shake(999999999, 0.005);
         // Background scrolls 1/3 to camera
         this.background.tilePositionX = this.cameras.main.scrollX * .3;
 

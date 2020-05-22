@@ -31,7 +31,7 @@ export default class WinScene extends Phaser.Scene {
     this.veil = this.add.graphics({ x: 0, y: 0 });
     // this.veil.fillStyle('#6d206e', 0.75);
     // Trouble making veil purple
-    this.veil.fillStyle('#6d206e', 0.5);
+    this.veil.fillStyle('0x6d206e', 0.3);
     this.veil.fillRect(0, 0, config.width, config.height);
     // this.veil.setDepth(5);
     this.veil.setScrollFactor(0);

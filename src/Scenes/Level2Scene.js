@@ -183,7 +183,7 @@ export default class Level2Scene extends Phaser.Scene {
     }
 
     create_player() {
-        this.player = this.physics.add.sprite(1600, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -262,7 +262,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.geysers.push(this.physics.add.sprite(7369,166, 'geyser'));
         this.geysers.push(this.physics.add.sprite(7470,545, 'geyser'));
         this.geysers.push(this.physics.add.sprite(9354,704, 'geyser'));
-        this.geysers.push(this.physics.add.sprite(1513,703, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(1501,703, 'geyser'));
     }
 
     create_portal() {

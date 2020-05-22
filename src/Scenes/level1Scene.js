@@ -74,7 +74,11 @@ export default class Level1Scene extends Phaser.Scene {
         // this.create_aliens();
         this.create_portal();
         // this.create_asteroids();
-
+        this.add.text(146, 464, 'Use A and D to move', { fontSize: '36px', fill: '#CCC' });
+        this.add.text(1286, 447, 'W to Jump!', { fontSize: '36px', fill: '#CCC' });
+        this.add.text(1286, 447, 'W to Jump!', { fontSize: '36px', fill: '#CCC' });
+        this.add.text(2994, 536, 'Don\'t fall into the core!', { fontSize: '34px', fill: '#CCC' });
+        this.add.text(3978, 529, 'Geysers will rplenish your air supply', { fontSize: '34px', fill: '#CCC' });
         this.setup_collisions();
 
         // Camera-World-Bounds
@@ -471,9 +475,7 @@ export default class Level1Scene extends Phaser.Scene {
     // }
 
     updateScore() {
-    
         this.scoreText.setText("Level "+this.level_num+" Score: "+this.sys.game.globals.score);
-    
     }
 
     add_keys(){
