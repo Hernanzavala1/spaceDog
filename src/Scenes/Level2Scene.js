@@ -56,7 +56,7 @@ export default class Level2Scene extends Phaser.Scene {
     create() {
         this.sound.add('bark');
 
-        this.globals_setup(1);
+        this.globals_setup(2);
 
         this.add_keys();
         //pause and unpause
@@ -71,18 +71,16 @@ export default class Level2Scene extends Phaser.Scene {
         this.score_setup();
 
         this.physics.world.bounds.width = 10000;
-        this.physics.world.bounds.height = 800;
+        this.physics.world.bounds.height = 1000;
 
         // BASE
-        // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
         this.create_platforms();
         this.create_walls();
         this.create_player();
         this.create_geysers();
         this.create_aliens();
         this.create_portal();
-        this.create_asteroids();
+        // this.create_asteroids();
 
         this.setup_collisions();
 
@@ -92,7 +90,7 @@ export default class Level2Scene extends Phaser.Scene {
 
         // Camera-World-Bounds
         // (x origin, y origin, width, height)
-        this.cameras.main.setBounds(0, 0, 10000, 600);
+        this.cameras.main.setBounds(0, 0, 10000, 800);
         this.cameras.main.startFollow(this.player);
         // this.cameras.main.shake(10000000);
         // Background scrolls 1/3 to camera
@@ -139,40 +137,45 @@ export default class Level2Scene extends Phaser.Scene {
 
     create_platforms() {
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(400, 616, 'ground').setScale(3).refreshBody();
-        this.platforms.create(1200, 290, 'ground').setScale(1).refreshBody();
-        this.platforms.create(1800, 370, 'ground').setScale(1).refreshBody();
-
-        this.platforms.create(1200, 568, 'ground').setScale(3).refreshBody();
-        this.platforms.create(1600, 532, 'ground').setScale(3).refreshBody();
-
-        this.platforms.create(3100, 568, 'ground').setScale(3).refreshBody();
-        this.platforms.create(3100, 370, 'ground').setScale(1).refreshBody();//1 
-        this.platforms.create(3600, 260, 'ground').setScale(1).refreshBody();// 3
-        this.platforms.create(3000, 200, 'ground').setScale(1).refreshBody();// 2
-
-        this.platforms.create(4100, 525, 'ground').setScale(3).refreshBody();
-        this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
-        this.platforms.create(5900, 525, 'ground').setScale(2, 3).refreshBody();
-        this.platforms.create(6700, 450, 'ground').setScale(3).refreshBody();
-
-        var here =this.platforms.create(400, 300, 'ground').setScale(1).refreshBody();
+        this.platforms.create(1500, 784, 'ground').setScale(7.5, 1).refreshBody();
+        this.platforms.create(1695, 692, 'ground').setScale(0.5, 4.75).refreshBody();
+        this.platforms.create(2062.5, 433, 'ground').setScale(0.7225, 1.25).refreshBody();
+        this.platforms.create(2632, 265, 'ground').setScale(1, 1.25).refreshBody();
+        this.platforms.create(2799.5, 723, 'ground').setScale(1.0025, 2.8125).refreshBody();
+        this.platforms.create(3547, 299, 'ground').setScale(1.25, 1.25).refreshBody();
+        this.platforms.create(4224, 784, 'ground').setScale(5, 1).refreshBody();
+        this.platforms.create(3723, 564, 'ground').setScale(1.015, 1.25).refreshBody();
+        this.platforms.create(4416.5, 441, 'ground').setScale(1.2725, 1.25).refreshBody();
+        this.platforms.create(4521, 188, 'ground').setScale(0.75, 1.25).refreshBody();
+        this.platforms.create(5381, 379, 'ground').setScale(0.555, 1.25).refreshBody();
+        this.platforms.create(7589, 784, 'ground').setScale(9.58, 1).refreshBody();
+        this.platforms.create(5887.5, 697.5, 'ground').setScale(0.6225, 4.40625).refreshBody();
+        this.platforms.create(6307, 521, 'ground').setScale(1, 1.25).refreshBody();
+        this.platforms.create(6733.5, 415, 'ground').setScale(0.7575, 1.25).refreshBody();
+        this.platforms.create(7176, 655, 'ground').setScale(2.25, 2.8125).refreshBody();
+        this.platforms.create(7280, 250, 'ground').setScale(1.5, 1.25).refreshBody();
+        this.platforms.create(8180, 481, 'ground').setScale(0.75, 1.25).refreshBody();
+        this.platforms.create(8863, 398, 'ground').setScale(0.65, 1.25).refreshBody();
+        this.platforms.create(9490, 276, 'ground').setScale(1.5, 1.25).refreshBody();
     }
 
     create_walls(){
         this.walls = this.physics.add.staticGroup();
-        this.walls.create(180,277, 'bomb');
-        this.walls.create(620,277, 'bomb');
+        this.walls.create(1802, 760, 'bomb');
+this.walls.create(2592, 760, 'bomb');    
     }
 
     create_aliens() {
-        //setup aliens
-        // this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
-        this.aliens.push(this.physics.add.sprite(400, 200, 'alien'));
+        this.aliens.push(this.physics.add.sprite(2155, 688, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3570, 197, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3733, 462, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3626, 712, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6394, 683, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6677, 340, 'alien'));
     }
 
     create_player() {
-        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(1600, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -244,8 +247,14 @@ export default class Level2Scene extends Phaser.Scene {
         });
 
         //setup geyers
-        this.geysers.push(this.physics.add.sprite(3000, 200, 'geyser'));
-
+        this.geysers.push(this.physics.add.sprite(2663,181, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(2696,613, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(4537,105, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(4435,703, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(7369,166, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(7470,545, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(9354,704, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(1513,703, 'geyser'));
     }
 
     create_portal() {
@@ -256,8 +265,7 @@ export default class Level2Scene extends Phaser.Scene {
             frameRate: 8,
             repeat: -1
         });
-
-        this.portal = this.physics.add.sprite(6000, 400, 'portal');
+        this.portal = this.physics.add.sprite(9648, 193, 'portal');
         this.portal.anims.play('Portal');
     }
 
@@ -302,7 +310,6 @@ export default class Level2Scene extends Phaser.Scene {
         }
 
         //alien collisions
-
         for (var i = 0; i < this.aliens.length; i++) {
             var alien = this.aliens[i];
             var xSpeed = 100;
@@ -333,6 +340,7 @@ export default class Level2Scene extends Phaser.Scene {
             }.bind(this));
             this.physics.add.collider(alien, this.walls, function(){
                 xSpeed = xSpeed*(-1);
+                console.log(xSpeed);
                 alien.setVelocityX(xSpeed);
             }.bind(this));
         }
@@ -420,12 +428,6 @@ export default class Level2Scene extends Phaser.Scene {
             key: 'meteor',
             setXY: { x: temp, y: -10 }
         });
-        // var meteor = this.anims.create({
-        //     key: 'falling',
-        //     frames: this.anims.generateFrameNumbers('meteor', { start: 0, end: 3 }),
-        //     frameRate: 8,
-        //     repeat: -1
-        // });
         this.physics.add.overlap(this.player, meteor, this.setDeath, null, this);
     }
 
@@ -586,7 +588,7 @@ export default class Level2Scene extends Phaser.Scene {
             return;
         }
 
-        if (this.player.y > 700) {
+        if (this.player.y > 800) {
             this.triggerGameOver("You fell to your death :(");
             this.scene.pause();
             return;
