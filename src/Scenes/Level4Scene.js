@@ -322,11 +322,11 @@ export default class Level1Scene extends Phaser.Scene {
             this.alienAnims();
             alien.anims.play('AlienWalk', true);
             alien.setVelocityX(100);
-            var playerAlienCollider = this.physics.add.collider(this.player, alien, function () { //collision with player
+            alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
                 this.jump_collide();
                 if (this.bark==3){ //bark is in kill state
                     alien.play("AlienDying");
-                    playerAlienCollider.destroy();
+                    alien.collider_player.destroy();
                     setTimeout(() => {
                         alien.destroy();
                         this.sys.game.globals.score+=100;
