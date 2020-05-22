@@ -9,6 +9,7 @@ import WinScene from './Scenes/WinScene';
 import OptionsScene from './Scenes/OptionsScene';
 import CreditsScene from './Scenes/CreditsScene';
 import RetryScene from './Scenes/RetryScene';
+import StoryScene from './Scenes/StoryScene';
 import Model from './Model';
 import LevelScene from './Scenes/LevelScene';
 import Level1Scene from './Scenes/Level1Scene';
@@ -27,6 +28,7 @@ class Game extends Phaser.Game {
     this.scene.add('Pause', PauseScene);
     this.scene.add('Retry', RetryScene);
     this.scene.add('Win', WinScene);
+    this.scene.add('Story', StoryScene);
     this.scene.add('Credits', CreditsScene);
     this.scene.add('Game', GameScene);
     this.scene.add('Level', LevelScene);
