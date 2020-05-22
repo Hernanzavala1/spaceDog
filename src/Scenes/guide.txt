@@ -1,0 +1,66 @@
+spawnAsteroid() {
+    console.log('Spawn Asteroid');
+    var temp = Phaser.Math.Between(this.cameras.main.worldView.x + 100, this.cameras.main.worldView.x + 800);
+    console.log("asteroid: " + temp);
+    var meteor = this.physics.add.group({
+        key: 'meteor',
+        setXY: { x: temp, y: -10 }
+    });
+    this.physics.add.overlap(this.player, meteor, this.setDeath, null, this);
+}
+
+creat(){
+    this.create_walls();
+}
+
+
+create_walls(){
+    this.walls = this.physics.add.staticGroup();
+    this.walls.create(1795, 760, 'bomb');
+    this.walls.create(2599, 760, 'bomb');
+    this.walls.create(3217, 761, 'bomb');
+    this.walls.create(3290, 263, 'bomb');
+    this.walls.create(3513, 537, 'bomb');
+    this.walls.create(3804, 273, 'bomb');
+    this.walls.create(3933, 537, 'bomb');
+    this.walls.create(6012, 761, 'bomb');
+    this.walls.create(6575, 388, 'bomb');
+    this.walls.create(6726, 691, 'bomb');
+    this.walls.create(6892, 388, 'bomb');   
+}
+setup_collisions() {
+    //alien collision
+    for (var i = 0; i < this.aliens.length; i++) {
+        var alien = this.aliens[i];
+        var xSpeed = 100;
+        this.physics.add.collider(alien, this.platforms); //colides with platforms
+        alien.setBounce(0.2);
+        alien.setCollideWorldBounds(true); //does not fall through world
+        this.alienAnims();
+        alien.anims.play('AlienWalk', true);
+        alien.setVelocityX(xSpeed);
+        var playerAlienCollider = this.physics.add.collider(this.player, alien, function () { //collision with player
+            this.jump_collide();
+            if (this.bark == 3) { //bark is in kill state
+                alien.play("AlienDying");
+                playerAlienCollider.destroy();
+                setTimeout(() => {
+                    alien.destroy();
+                    this.score += 100;
+                }, 1000);
+            }
+            else if (this.invincible == false) {
+                alien.setBounce(0.0);
+                this.invincible = true;
+                this.timer.pop();
+                this.player.anims.play('damage');
+                console.log("Hit alien number: " + i);
+                setTimeout(() => { this.invincible = false; }, 1000);
+            }
+        }.bind(this));
+        this.physics.add.collider(alien, this.walls, function(){
+            xSpeed = xSpeed*(-1);
+            alien.setVelocityX(xSpeed);
+        }.bind(this));
+    }
+}

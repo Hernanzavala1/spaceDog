@@ -70,7 +70,7 @@ export default class Level1Scene extends Phaser.Scene {
         // BASE
         this.create_platforms();
         this.create_player();
-        // this.create_geysers();
+        this.create_geysers();
         // this.create_aliens();
         this.create_portal();
         // this.create_asteroids();
@@ -145,10 +145,9 @@ export default class Level1Scene extends Phaser.Scene {
 
     create_platforms(){
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(3069/2, 750+25, 'ground').setScale((3069/400), (50/32)).refreshBody();
-        this.platforms.create(1610+857/2, 570+(180/2), 'ground').setScale((857/400), (180/32)).refreshBody();
+        this.platforms.create(1534.5, 775, 'ground').setScale(7.6725, 1.5625).refreshBody();
+        this.platforms.create(2038.5, 660, 'ground').setScale(2.1425, 5.625).refreshBody();
         this.platforms.create(2404, 304, 'ground').setScale(1.65, 1.25).refreshBody();
-        this.platforms.create(2067, 277, 'ground').setScale(0.035, 0.4375).refreshBody();
         this.platforms.create(4395.5, 775, 'ground').setScale(4.5925, 1.5625).refreshBody();
         this.platforms.create(4252, 183, 'ground').setScale(0.75, 1.25).refreshBody();
         this.platforms.create(4713.5, 470, 'ground').setScale(1.0025, 1.25).refreshBody();
@@ -165,7 +164,7 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     create_player(){
-        this.player = this.physics.add.sprite(9100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -238,8 +237,10 @@ export default class Level1Scene extends Phaser.Scene {
         });
 
         //setup geyers
-        this.geysers.push(this.physics.add.sprite(3000, 200, 'geyser'));
-
+        this.geysers.push(this.physics.add.sprite(4289,686, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(4704,386, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(7240,165, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(8157,686, 'geyser'));
     }
 
     create_portal(){
@@ -251,7 +252,7 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.portal = this.physics.add.sprite(9343, 660, 'portal');
+        this.portal = this.physics.add.sprite(9343, 596, 'portal');
         this.portal.anims.play('Portal');
     }
 
