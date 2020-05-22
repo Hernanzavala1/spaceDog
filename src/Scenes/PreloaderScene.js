@@ -119,6 +119,8 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.image('level1 h', 'assets/ui/Level1Button/Level1Button_Hovered.png');
     this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
     this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
+    this.load.image('level3', 'assets/ui/Level3Button/Level3Button.png');
+    this.load.image('level3 h', 'assets/ui/Level3Button/Level3Button_Hovered.png');
 
     //for help scene
     this.load.image('optionsbg', 'assets/ui/Help.png');
