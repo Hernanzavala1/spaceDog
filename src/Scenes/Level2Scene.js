@@ -38,7 +38,7 @@ export default class Level2Scene extends Phaser.Scene {
         // this.load.image('sky', 'assets/sky.png');
         // this.load.image('ground', 'assets/platform.png');
         // this.load.image('star', 'assets/star.png');
-        // this.load.image('bomb', 'assets/bomb.png');
+        this.load.image('bomb', 'assets/bomb.png');
         // this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
         // this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
         // this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
@@ -76,7 +76,9 @@ export default class Level2Scene extends Phaser.Scene {
         // this.create_asteroids();
 
         this.setup_collisions();
-
+        this.add.text(226, 467, 'This planet shows signs of life...', { fontSize: '30px', fill: '#CCC' });
+        this.add.text(2832, 494, 'Use Space to Bark!', { fontSize: '32px', fill: '#CCC' });
+        this.add.text(2018, 586, 'They don\'t seem too friendly', { fontSize: '20px', fill: '#CCC' });
         // Camera-World-Bounds
         // (x origin, y origin, width, height)
         this.cameras.main.setBounds(0, 0, 10000, 800);
@@ -147,7 +149,9 @@ export default class Level2Scene extends Phaser.Scene {
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(1500, 784, 'ground').setScale(7.5, 1).refreshBody();
         this.platforms.create(1684.5, 678, 'ground').setScale(0.6475, 5.625).refreshBody();
-        this.platforms.create(2062.5, 433, 'ground').setScale(0.7225, 1.25).refreshBody();
+        this.platforms.create(1973.5, 569.5, 'ground').setScale(0.7125, 0.65625).refreshBody();
+        this.platforms.create(2342.5, 569.5, 'ground').setScale(0.7125, 0.65625).refreshBody();
+        this.platforms.create(2559.5, 630.5, 'ground').setScale(0.2675, 0.65625).refreshBody();        
         this.platforms.create(2632, 265, 'ground').setScale(1, 1.25).refreshBody();
         this.platforms.create(2799.5, 723, 'ground').setScale(1.0025, 2.8125).refreshBody();
         this.platforms.create(3547, 299, 'ground').setScale(1.25, 1.25).refreshBody();
@@ -170,20 +174,30 @@ export default class Level2Scene extends Phaser.Scene {
     create_walls(){
         this.walls = this.physics.add.staticGroup();
         this.walls.create(1802, 760, 'bomb');
-        this.walls.create(2592, 760, 'bomb');    
+        this.walls.create(2592, 721, 'bomb');
+        this.walls.create(3217, 761, 'bomb');
+        this.walls.create(3290, 263, 'bomb');
+        this.walls.create(3513, 537, 'bomb');
+        this.walls.create(3804, 273, 'bomb');
+        this.walls.create(3933, 537, 'bomb');
+        this.walls.create(6012, 761, 'bomb');
+        this.walls.create(6575, 388, 'bomb');
+        this.walls.create(6726, 691, 'bomb');
+        this.walls.create(6892, 388, 'bomb');   
     }
 
     create_aliens() {
-        this.aliens.push(this.physics.add.sprite(2155, 688, 'alien'));
-        this.aliens.push(this.physics.add.sprite(3570, 197, 'alien'));
-        this.aliens.push(this.physics.add.sprite(3733, 462, 'alien'));
-        this.aliens.push(this.physics.add.sprite(3626, 712, 'alien'));
-        this.aliens.push(this.physics.add.sprite(6394, 683, 'alien'));
-        this.aliens.push(this.physics.add.sprite(6677, 340, 'alien'));
+        this.aliens.push(this.physics.add.sprite(2082, 634, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3467, 216, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3660, 489, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3446, 713, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6546, 713, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6726, 340, 'alien'));
+        this.aliens.push(this.physics.add.sprite(7966, 699, 'alien'));
     }
 
     create_player() {
-        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(4100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation

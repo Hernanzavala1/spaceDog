@@ -307,6 +307,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.walls.create(9538, 761, 'bomb');
         this.walls.create(3241, 761, 'bomb');
         this.walls.create(5255, 761, 'bomb');
+        this.walls.setVisible(false);
     }
     setup_collisions(){
 
