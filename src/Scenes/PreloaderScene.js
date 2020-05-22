@@ -110,7 +110,7 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.audio('bark', 'assets/bark.mp3');
 
     //level backgrounds
-    this.load.image('Level1Background', 'assets/Level1Background.png');
+    this.load.image('Level1Background', 'assets/Level6Background.png');
     this.load.image('Level2Background', 'assets/Level2Background.png');
     this.load.image('Level3Background', 'assets/Level3Background.png');
     this.load.image('Level4Background', 'assets/Level4Background.png');
