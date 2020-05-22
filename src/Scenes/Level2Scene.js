@@ -71,6 +71,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.create_platforms();
         this.create_player();
         this.create_geysers();
+        this.create_walls();
         this.create_aliens();
         this.create_portal();
         // this.create_asteroids();
@@ -184,6 +185,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.walls.create(6575, 388, 'bomb');
         this.walls.create(6726, 691, 'bomb');
         this.walls.create(6892, 388, 'bomb');   
+        this.walls.setVisible(false);
     }
 
     create_aliens() {
@@ -197,7 +199,7 @@ export default class Level2Scene extends Phaser.Scene {
     }
 
     create_player() {
-        this.player = this.physics.add.sprite(4100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -335,13 +337,14 @@ export default class Level2Scene extends Phaser.Scene {
 
         //alien collisions
         for (var i=0; i<this.aliens.length; i++){
+            var xSpeed = 100;
             var alien = this.aliens[i];
             this.physics.add.collider(alien, this.platforms);
             alien.setBounce(0.2);
             alien.setCollideWorldBounds(true);
             this.alienAnims();
             alien.anims.play('AlienWalk', true);
-            alien.setVelocityX(100);
+            alien.setVelocityX(xSpeed);
             alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
                 this.jump_collide();
                 if (this.bark==3){ //bark is in kill state
@@ -353,7 +356,6 @@ export default class Level2Scene extends Phaser.Scene {
                     }, 1000);
                 }
                 else if (this.invincible==false){
-                    alien.setBounce(0.0);
                     this.invincible = true;
                     this.timer.pop();
                     //this.player.anims.play('damage');
