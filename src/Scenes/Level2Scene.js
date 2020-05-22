@@ -58,7 +58,7 @@ export default class Level2Scene extends Phaser.Scene {
         this.globals_setup(2);
 
         this.add_keys();
-        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level1Background');
+        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level2Background');
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
@@ -183,7 +183,7 @@ export default class Level2Scene extends Phaser.Scene {
     }
 
     create_player() {
-        this.player = this.physics.add.sprite(1600, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(300, 650, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
