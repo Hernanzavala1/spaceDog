@@ -15,6 +15,7 @@ import LevelScene from './Scenes/LevelScene';
 import Level1Scene from './Scenes/Level1Scene';
 import Level2Scene from './Scenes/Level2Scene';
 import Level3Scene from './Scenes/Level3Scene';
+import Level4Scene from './Scenes/Level4Scene';
 
 class Game extends Phaser.Game {
   constructor () {
@@ -35,6 +36,7 @@ class Game extends Phaser.Game {
     this.scene.add('Level1', Level1Scene);
     this.scene.add('Level2', Level2Scene);
     this.scene.add('Level3', Level3Scene );
+    this.scene.add('Level4', Level4Scene );
     this.scene.start('Boot');
   }
 }
