@@ -104,11 +104,18 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
     this.load.image('wave', '../../assets/wave.jpg');
     this.load.image('blue', 'assets/blue.jpg');
-    this.load.image('space', 'assets/space.jpg');
     this.load.image('bubble', 'assets/bubble.png');
     this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
     this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
     this.load.audio('bark', 'assets/bark.mp3');
+
+    //level backgrounds
+    this.load.image('Level1Background', 'assets/Level1Background.png');
+    this.load.image('Level2Background', 'assets/Level2Background.png');
+    this.load.image('Level3Background', 'assets/Level3Background.png');
+    this.load.image('Level4Background', 'assets/Level4Background.png');
+    this.load.image('Level5Background', 'assets/Level5Background.png');
+    this.load.image('Level6Background', 'assets/Level6Background.png');
 
     //for controls scene
     this.load.image('controlbg', 'assets/ui/Controls.png');

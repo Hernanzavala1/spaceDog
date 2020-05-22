@@ -58,7 +58,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.globals_setup(1);
 
         this.add_keys();
-        this.background = this.add.tileSprite(0, 0, 800, 600, 'space');
+        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level1Background');
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
@@ -101,7 +101,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
-        // this.timer = new Timer(this, 400, 0, 5, 4000);
+        this.timer = new Timer(this, 400, 0, 5, 4000);
 
         this.scene.launch("Pause");
         this.scene.pause("Pause");
@@ -291,7 +291,7 @@ export default class Level1Scene extends Phaser.Scene {
             this.physics.add.collider(geyser, this.platforms); //collision with platforms
             this.physics.add.overlap(this.player, geyser, function () { //collision with player
                 this.jump_collide();
-                // this.timer.restart();
+                this.timer.restart();
             }.bind(this));
         }
 
@@ -587,17 +587,17 @@ export default class Level1Scene extends Phaser.Scene {
                 this.scene.pause();
                 return;
             }
-            // if (this.timer.expired){
-            //     this.triggerGameOver("You ran out of air!");
-            //     this.scene.pause();
-            //     return;
-            // }
+            if (this.timer.expired){
+                this.triggerGameOver("You ran out of air!");
+                this.scene.pause();
+                return;
+            }
 
-            // if (this.player.y > 700){
-            //     this.triggerGameOver("You fell to your death :(");
-            //     this.scene.pause();
-            //     return;
-            // }
+            if (this.player.y > 700){
+                this.triggerGameOver("You fell to your death :(");
+                this.scene.pause();
+                return;
+            }
 
         }
     };

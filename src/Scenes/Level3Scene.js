@@ -63,7 +63,7 @@ export default class Level1Scene extends Phaser.Scene {
         // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
         // this.background.setOrigin(0, 0);
         // this.background.setScrollFactor(0);
-        this.background = this.add.tileSprite(0, 0, 800, 600, 'space');
+        this.background = this.add.tileSprite(0, 0, 800, 600, 'Level3Background');
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
 
