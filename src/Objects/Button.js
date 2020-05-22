@@ -25,6 +25,7 @@ export default class Button extends Phaser.GameObjects.Container {
       }
       else if (restart){
         this.scene.scene.remove(this.scene.sys.game.globals.currentLevelString);
+        this.scene.scene.pause();
         if (this.scene.sys.game.globals.currentLevelString==="Level1"){
           this.scene.scene.add('Level1', Level1Scene);
           this.scene.scene.start("Level1");
@@ -37,8 +38,47 @@ export default class Button extends Phaser.GameObjects.Container {
           this.scene.scene.add('Level3', Level3Scene);
           this.scene.scene.start("Level3");
         }
+        else if (this.scene.sys.game.globals.currentLevelString==="Level4"){
+          this.scene.scene.add('Level4', Level4Scene);
+          this.scene.scene.start("Level4");
+        }
+        else if (this.scene.sys.game.globals.currentLevelString==="Level5"){
+          this.scene.scene.add('Level5', Level5Scene);
+          this.scene.scene.start("Level5");
+        }
+        else if (this.scene.sys.game.globals.currentLevelString==="Level6"){
+          this.scene.scene.add('Level6', Level6Scene);
+          this.scene.scene.start("Level6");
+        }
       }
-      else this.scene.scene.start(targetScene);
+      else{
+        if (this.scene.sys.game.globals.currentLevel){
+          this.scene.scene.remove(this.scene.sys.game.globals.currentLevelString);
+          this.scene.scene.pause();
+          if (this.scene.sys.game.globals.currentLevelString==="Level1"){
+            this.scene.scene.add('Level1', Level1Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level2"){
+            this.scene.scene.add('Level2', Level2Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level3"){
+            this.scene.scene.add('Level3', Level3Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level4"){
+            this.scene.scene.add('Level4', Level4Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level5"){
+            this.scene.scene.add('Level5', Level5Scene);
+          }
+          else if (this.scene.sys.game.globals.currentLevelString==="Level6"){
+            this.scene.scene.add('Level6', Level6Scene);
+          }
+        }
+        
+        console.log("Changing scene");
+        this.scene.scene.start(targetScene);
+        this.scene.scene.bringToTop(targetScene);
+      } 
     }.bind(this));
 
     this.button.on('pointerover', function () {

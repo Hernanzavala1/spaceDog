@@ -11,9 +11,9 @@ export default class Level1Scene extends Phaser.Scene {
         this.aliens = [];
         this.geysers = [];
         this.cursors;
-        this.spacebar;
+        this.cursors2;
+        this.shift;
         this.stars;
-        this.score = 0;
         this.scoreText;
         this.bombs;
         this.background;
@@ -97,29 +97,46 @@ export default class Level1Scene extends Phaser.Scene {
 
         // Listener for Arrow Key Input
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors2 = this.input.keyboard.addKeys({
+            up:Phaser.Input.Keyboard.KeyCodes.W,
+            down:Phaser.Input.Keyboard.KeyCodes.S,
+            left:Phaser.Input.Keyboard.KeyCodes.A,
+            right:Phaser.Input.Keyboard.KeyCodes.D});
         // Listen for Key press input - only esc key
         
         // Listen for Key press input - handles everything else
         //this.input.keyboard.on('keydown', this.otherKey, this);
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keydown-' + "S", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
+        this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
-        this.timer = new Timer(this, 0, 0, 5, 4000);
+        this.timer = new Timer(this, 400, 0, 5, 4000);
 
         this.scene.launch("Pause");
         this.scene.launch("Retry");
+        this.scene.launch("Win");
+        this.scene.launch("Story");
         this.scene.bringToTop(this);
+        this.do_story();
+    }
+
+    do_story(){
+        this.scene.pause();
+        this.scene.bringToTop(this.scene.get('Story'));
     }
 
     globals_setup(num){
         this.level_num = num;
         this.sys.game.globals.currentLevel = this;
         this.sys.game.globals.currentLevelString = "Level"+this.level_num;
+        
     }
 
     score_setup(){
-        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.score, { fontSize: '16px', fill: '#CCC' });
+        this.sys.game.globals.score = 0;
+        this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.sys.game.globals.score, { fontSize: '16px', fill: '#CCC' });
         this.scoreText.setScrollFactor(0);
     }
 
@@ -261,9 +278,9 @@ export default class Level1Scene extends Phaser.Scene {
             if (!this.finished) {
                 this.player.anims.play('disapear');
                 setTimeout(() => {
-                    var won = this.add.text(6000, 200, 'You Won!', { fontSize: '56px', fill: '#CCC' });
-                    won.setOrigin(.5);
-                    this.physics.pause();
+                    this.scene.pause();
+                    this.scene.resume("Win");
+                    this.scene.bringToTop(this.scene.get('Win'));
                 }, 100);
 
 
@@ -306,7 +323,7 @@ export default class Level1Scene extends Phaser.Scene {
                     playerAlienCollider.destroy();
                     setTimeout(() => {
                         alien.destroy();
-                        this.score+=100;
+                        this.sys.game.globals.score+=100;
                     }, 1000);
                 }
                 else if (this.invincible==false){
@@ -456,13 +473,13 @@ export default class Level1Scene extends Phaser.Scene {
 
     updateScore() {
     
-        this.scoreText.setText("Level "+this.level_num+" Score: "+this.score);
+        this.scoreText.setText("Level "+this.level_num+" Score: "+this.sys.game.globals.score);
     
     }
 
     add_keys(){
+        this.shift = this.input.keyboard.addKey("SHIFT");
         this.spacebar = this.input.keyboard.addKey("SPACE");
-        this.b = this.input.keyboard.addKey("b");
         this.esc = this.input.keyboard.addKey("ESC",true,false);
     }
 
@@ -488,15 +505,15 @@ export default class Level1Scene extends Phaser.Scene {
             }
             this.esc.isDown = false;
             this.gamePaused = false;
-            if (this.spacebar.isDown) {
+            if (this.shift.isDown) {
                 run = true;
             }
 
-            if (this.spacebar.isUp) {
+            if (this.shift.isUp) {
                 run = false;
             }   
 
-            if (this.b.isDown){
+            if (this.spacebar.isDown){
                 if (this.bark==0){
                     this.bark = 3;
                     console.log("Bark!");
@@ -512,17 +529,17 @@ export default class Level1Scene extends Phaser.Scene {
                 }
             }
 
-            if (this.b.isUp){
+            if (this.spacebar.isUp){
                 if (this.bark==1) this.bark--; //set it so bark can be used again
             }
 
-            if (this.cursors.up.isDown && !this.crawl && !this.jump) {
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown)&& !this.crawl && !this.jump) {
                 this.player.play('jump', true);
                 this.jump = true;
             }
 
             
-            if (this.cursors.left.isDown) {
+            if (this.cursors.left.isDown || this.cursors2.left.isDown) {
                 if (!this.player.flipX) {
                     this.player.flipX = true;
                 }
@@ -537,7 +554,7 @@ export default class Level1Scene extends Phaser.Scene {
                     }
                 }
             }
-            else if (this.cursors.right.isDown) {
+            else if (this.cursors.right.isDown || this.cursors2.right.isDown) {
                 if (this.player.flipX) {
                     this.player.flipX = false;
                 }
@@ -563,7 +580,7 @@ export default class Level1Scene extends Phaser.Scene {
             }
         }
 
-            if (this.cursors.up.isDown && this.player.body.touching.down) {
+            if ((this.cursors.up.isDown || this.cursors2.up.isDown )&& this.player.body.touching.down) {
                 this.player.setVelocityY(-330);
             }
             this.currentX = this.cameras.main.worldView.x;

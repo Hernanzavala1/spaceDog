@@ -1,7 +1,7 @@
 import 'phaser';
 
 export default class Timer extends Phaser.GameObjects.Container {
-  constructor(scene, x, y,bubbles,time) {
+  constructor(scene,x,y,bubbles,time) {
     super(scene,x,y,null);
     this.clock = this.scene.time;
     this.scene = scene;
@@ -16,15 +16,17 @@ export default class Timer extends Phaser.GameObjects.Container {
     this.expired = false;
 
     var s1 = this.scene.add.sprite(x,y, this.sprite);
+    s1.setScale(2);
     
     this.width = s1.displayWidth;
     this.height = s1.displayHeight;
 
     s1.destroy(true);
 
-    for (var i=0; i<bubbles; i++){
-        var sprite = this.scene.add.sprite(x+i*(this.width+5), y, this.sprite);
-        sprite.setOrigin(0.0,0.0);
+    for (var i=bubbles-1; i>=0; i--){
+        var sprite = this.scene.add.sprite(x-this.width-10, (y+i)*(this.height+5)+10, this.sprite); // TODO: Change where bubbles lay
+        sprite.setScale(2);
+        sprite.setOrigin(0.0,0.0);  //TODO: Change where bubbles lay
         sprite.setScrollFactor(0);
         this.bubbles.push(sprite);
         this.add(sprite);
