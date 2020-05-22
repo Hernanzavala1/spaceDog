@@ -274,7 +274,7 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.portal = this.physics.add.sprite(6000, 400, 'portal');
+        this.portal = this.physics.add.sprite(9443, 767, 'portal');
         this.portal.anims.play('Portal');
     }
 
