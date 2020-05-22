@@ -31,6 +31,8 @@ export default class Level2Scene extends Phaser.Scene {
         this.jumpCount = 0;
         this.invincible = false;
         this.bark = 0;
+        this.invincibleLock = false;
+        this.p;
     }
 
     preload() {
@@ -98,6 +100,7 @@ export default class Level2Scene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keydown-' + "S", () => this.changePlayer());
+        this.input.keyboard.on('keydown-P', () => {this.invincibleLock = true; this.invincible = true;});
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
@@ -330,6 +333,8 @@ export default class Level2Scene extends Phaser.Scene {
             alien.setVelocityX(100);
             alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
                 this.jump_collide();
+                this.jump_collide();
+                if (!this.invincibleLock) {
                 if (this.bark==3){ //bark is in kill state
                     alien.play("AlienDying");
                     alien.collider_player.destroy();
@@ -355,6 +360,7 @@ export default class Level2Scene extends Phaser.Scene {
                     }
                     setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
+            }
             }.bind(this));
 
             this.physics.add.collider(alien, this.walls, function(){
@@ -607,7 +613,8 @@ export default class Level2Scene extends Phaser.Scene {
                 this.player.setVelocityY(-330);
             }
             this.currentX = this.cameras.main.worldView.x;
-            if (this.dead) {
+            if (!this.invincibleLock) {
+                if (this.dead) {
                 this.triggerGameOver("You got hit by a meteor, ouch!");
                 this.scene.pause();
                 return;
@@ -623,6 +630,7 @@ export default class Level2Scene extends Phaser.Scene {
                 this.scene.pause();
                 return;
             }
+        }
 
         }
     };
