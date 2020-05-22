@@ -30,6 +30,8 @@ export default class Level1Scene extends Phaser.Scene {
         this.jump = false;
         this.jumpCount = 0;
         this.invincible = false;
+        this.invincibleLock = false;
+        this.p;
         this.bark = 0;
     }
 
@@ -111,6 +113,7 @@ export default class Level1Scene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keydown-' + "S", () => this.changePlayer());
+        this.input.keyboard.on('keydown-'+"P", () => {this.invincibleLock = true; this.invincible = true;});
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
@@ -363,7 +366,8 @@ export default class Level1Scene extends Phaser.Scene {
             alien.setVelocityX(100);
             alien.collider_player = this.physics.add.collider(this.player, alien, function (player,alien) { //collision with player
                 this.jump_collide();
-                if (this.bark==3){ //bark is in kill state
+                if (!this.invincibleLock) {
+                    if (this.bark==3){ //bark is in kill state
                     alien.play("AlienDying");
                     alien.collider_player.destroy();
                     setTimeout(() => {
@@ -388,6 +392,7 @@ export default class Level1Scene extends Phaser.Scene {
                     }
                     setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
+            }
             }.bind(this));
             this.physics.add.collider(alien, this.walls, function(){
                 // console.log(xSpeed);
@@ -528,6 +533,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.shift = this.input.keyboard.addKey("SHIFT");
         this.spacebar = this.input.keyboard.addKey("SPACE");
         this.esc = this.input.keyboard.addKey("ESC",true,false);
+        this.p = this.input.keyboard.addKey("P",true, false);
     }
 
     jump_collide(){
@@ -631,6 +637,7 @@ export default class Level1Scene extends Phaser.Scene {
                 this.player.setVelocityY(-330);
             }
             this.currentX = this.cameras.main.worldView.x;
+            if (!this.invincibleLock) {
             if (this.dead) {
                 this.triggerGameOver("You got hit by a meteor, ouch!");
                 this.scene.pause();
@@ -646,6 +653,7 @@ export default class Level1Scene extends Phaser.Scene {
                 this.triggerGameOver("You fell to your death :(");
                 this.scene.pause();
                 return;
+            }
             }
 
         }

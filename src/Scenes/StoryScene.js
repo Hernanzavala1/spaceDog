@@ -5,10 +5,10 @@ import config from '../Config/config';
 export default class WinScene extends Phaser.Scene {
   constructor () {
     super('Story');
-    this.l1 = "Level 1 story";
-    this.l2 = "Level 2 story";
-    this.l3 = "Level 3 story";
-    this.l4 = "Level 4 story";
+    this.l1 = "You are the last Space Dog on a mission to get home! \n Get to the portal as quick as you can! \nGeysers are your friends!\nInteract with one to fill your oxygen levels!";
+    this.l2 = "The portal only took us part way,\nlooks like we have some more space ahead of us.\nWait, what's that! \nUh oh - it looks like we have alien company!\n Scare them to death using your bark (Space)!";
+    this.l3 = "You portal into a dark underground cave crawling with aliens!\n Oh, yeah!\n You can use the down arrow or S to crawl!\nYou might need it in this tight cave!";
+    this.l4 = "THINGS ARE OFFICIALLY\nFALLING FROM THE SKY!\nDodge the meteors,\nthose things will kill you!";
     this.l5 = "Level 5 story";
     this.l6 = "Level 6 story";
   }
@@ -38,7 +38,7 @@ export default class WinScene extends Phaser.Scene {
   }
 
   update_text(msg){
-    var font_size = 1000/msg.length;
+    var font_size = 3000/msg.length;
     this.txt_pause.setFontSize(font_size);
     this.txt_pause.setText(msg);
   }
