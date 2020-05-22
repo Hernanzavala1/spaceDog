@@ -19,13 +19,13 @@ export default class PauseScene extends Phaser.Scene {
 
   create () {
     this.escP = this.input.keyboard.addKey("ESC",true,false);
+    this.createPauseScreen();
     this.retry = new Button(this, 400, config.height/2 + 100, 'retryp', 'retryph', '', '', false,true);
     this.resume = new Button(this, 400, config.height/2, 'resumep', 'resumeph', '', '',true);
     this.level_select = new Button(this, 400, config.height/2 + 200, 'levelp', 'levelph', '','Title');
     this.retry.setScrollFactor(0);
     this.resume.setScrollFactor(0);
     this.level_select.setScrollFactor(0);
-    this.createPauseScreen();
   }
 
   update () {
@@ -44,7 +44,7 @@ export default class PauseScene extends Phaser.Scene {
     this.veil = this.add.graphics({ x: 0, y: 0 });
     // this.veil.fillStyle('#6d206e', 0.75);
     // Trouble making veil purple
-    this.veil.fillStyle('#6d206e', 0.5);
+    this.veil.fillStyle('0x6d206e', 0.3);
     this.veil.fillRect(0, 0, config.width, config.height);
     // this.veil.setDepth(5);
     this.veil.setScrollFactor(0);
