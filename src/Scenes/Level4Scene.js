@@ -38,7 +38,7 @@ export default class Level1Scene extends Phaser.Scene {
         // this.load.image('sky', 'assets/sky.png');
         // this.load.image('ground', 'assets/platform.png');
         // this.load.image('star', 'assets/star.png');
-        // this.load.image('bomb', 'assets/bomb.png');
+        this.load.image('bomb', 'assets/bomb.png');
         // this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
         // this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
         // this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
@@ -74,11 +74,12 @@ export default class Level1Scene extends Phaser.Scene {
         // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
 
         this.create_platforms();
+        this.create_walls()
         this.create_player();
         this.create_geysers();
         this.create_aliens();
         this.create_portal();
-        //this.create_asteroids();
+        this.create_asteroids();
 
         this.score_setup();
 
@@ -140,47 +141,64 @@ export default class Level1Scene extends Phaser.Scene {
     score_setup(){
         this.sys.game.globals.score = 0;
         this.scoreText = this.add.text(0, 16, 'Level ' + this.level_num + ' Score: ' + this.sys.game.globals.score, { fontSize: '16px', fill: '#CCC' });
+        this.add.text(402, 490, 'Don\'t get hit, RUN!', { fontSize: '36px', fill: '#CCC' });
         this.scoreText.setScrollFactor(0);
     }
 
     create_platforms(){
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(1513, 784, 'ground').setScale(7.565, 1).refreshBody();
-        this.platforms.create(1684.5, 677, 'ground').setScale(0.6475, 5.875).refreshBody();
+        this.platforms.create(1684.5, 678, 'ground').setScale(0.6475, 5.625).refreshBody();
         this.platforms.create(2726, 660.5, 'ground').setScale(1.5, 6.71875).refreshBody();
         this.platforms.create(4248, 784, 'ground').setScale(5, 1).refreshBody();
         this.platforms.create(3572, 396.04, 'ground').setScale(1.25, 1.25).refreshBody();
         this.platforms.create(4152, 567.04, 'ground').setScale(1.015, 1.25).refreshBody();
         this.platforms.create(4726, 441.96, 'ground').setScale(1, 1.25).refreshBody();
         this.platforms.create(7568.5, 784, 'ground').setScale(9.8125, 1).refreshBody();
-        this.platforms.create(5839.5, 697.5, 'ground').setScale(0.6225, 4.40625).refreshBody();
+        this.platforms.create(5839.5, 703, 'ground').setScale(0.6225, 4.0625).refreshBody();
         this.platforms.create(6333, 522.71, 'ground').setScale(1, 1.25).refreshBody();
         this.platforms.create(6723.5, 355, 'ground').setScale(0.3675, 1.25).refreshBody();
         this.platforms.create(7205, 674, 'ground').setScale(2.25, 5.875).refreshBody();
-        this.platforms.create(7328, 239.83, 'ground').setScale(1.5, 1.25).refreshBody();
-        this.platforms.create(8686.5, 681.21, 'ground').setScale(4.1075, 1.25).refreshBody();
-        this.platforms.create(9380, 320, 'ground').setScale(3.2, 1.25).refreshBody();
+        this.platforms.create(7328, 239, 'ground').setScale(1.5, 1.25).refreshBody();
+        this.platforms.create(8693.5, 639, 'ground').setScale(4.1075, 1.25).refreshBody();
+        this.platforms.create(8250, 420, 'ground').setScale(0.75, 1.25).refreshBody();
+        this.platforms.create(9380, 346, 'ground').setScale(3.1, 1.25).refreshBody();
     }
 
     create_asteroids(){
         //Timer for asteroids
         this.timedEvent = this.time.addEvent({
-            delay: 5000,
+            delay: 2500,
             callback: this.spawnAsteroid,
             callbackScope: this,
             repeat: 999999,
             startAt: 1
         });
     }
-
+    spawnAsteroid() {
+        console.log('Spawn Asteroid');
+        var temp = Phaser.Math.Between(this.cameras.main.worldView.x + 100, this.cameras.main.worldView.x + 800);
+        console.log("asteroid: " + temp);
+        var meteor = this.physics.add.group({
+            key: 'meteor',
+            setXY: { x: temp, y: -10 }
+        });
+        this.physics.add.overlap(this.player, meteor, this.setDeath, null, this);
+    }
     create_aliens(){
         //setup aliens
-        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
-
+        this.aliens.push(this.physics.add.sprite(1261, 709, 'alien'));
+        this.aliens.push(this.physics.add.sprite(2267, 709, 'alien'));
+        this.aliens.push(this.physics.add.sprite(3465, 321, 'alien'));
+        this.aliens.push(this.physics.add.sprite(5821, 576, 'alien'));
+        this.aliens.push(this.physics.add.sprite(6334, 708, 'alien'));
+        this.aliens.push(this.physics.add.sprite(9262, 720, 'alien'));
+        this.aliens.push(this.physics.add.sprite(9310, 272, 'alien'));
+        this.aliens.push(this.physics.add.sprite(4291, 713, 'alien'));
     }
 
     create_player(){
-        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(100, 450, 'spaceDog'); //spawndog
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -256,6 +274,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.geysers.push(this.physics.add.sprite(4442,366.14, 'geyser'));
         this.geysers.push(this.physics.add.sprite(6597,712, 'geyser'));
         this.geysers.push(this.physics.add.sprite(7281,163.91, 'geyser'));
+        this.geysers.push(this.physics.add.sprite(1680,519, 'geyser'));
 
     }
 
@@ -268,10 +287,26 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.portal = this.physics.add.sprite(6000, 400, 'portal');
+        this.portal = this.physics.add.sprite(9909, 261, 'portal');
         this.portal.anims.play('Portal');
     }
-
+    create_walls(){
+        this.walls = this.physics.add.staticGroup();
+        this.walls.create(1548, 761, 'bomb');
+        this.walls.create(1821, 764, 'bomb');
+        this.walls.create(2419, 761, 'bomb');
+        this.walls.create(3315, 369, 'bomb');
+        this.walls.create(3829, 369, 'bomb');
+        this.walls.create(5708, 631, 'bomb');
+        this.walls.create(5971, 631, 'bomb');
+        this.walls.create(5971, 761, 'bomb');
+        this.walls.create(6748, 761, 'bomb');
+        this.walls.create(7662, 761, 'bomb');
+        this.walls.create(8753, 318, 'bomb');
+        this.walls.create(9538, 761, 'bomb');
+        this.walls.create(3241, 761, 'bomb');
+        this.walls.create(5255, 761, 'bomb');
+    }
     setup_collisions(){
 
         //setup collision between portal and platforms
@@ -315,7 +350,9 @@ export default class Level1Scene extends Phaser.Scene {
         //alien collisions
 
         for (var i=0; i<this.aliens.length; i++){
+            var xSpeed = 100;
             var alien = this.aliens[i];
+            alien.setCollideWorldBounds(true);
             this.physics.add.collider(alien, this.platforms);
             alien.setBounce(0.2);
             alien.setCollideWorldBounds(true);
@@ -349,6 +386,11 @@ export default class Level1Scene extends Phaser.Scene {
                     }
                     setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
+            }.bind(this));
+            this.physics.add.collider(alien, this.walls, function(){
+                // console.log(xSpeed);
+                xSpeed = xSpeed*(-1);
+                alien.setVelocityX(xSpeed);
             }.bind(this));
         }
     }
@@ -429,9 +471,11 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     setDeath() {
-        if (!this.dead) {
-            console.log('Set death');
-            this.dead = true;
+        if(!this.invincible){
+            if (!this.dead) {
+                console.log('Set death');
+                this.dead = true;
+            }
         }
     }
     createGameOverScreen(msg) {

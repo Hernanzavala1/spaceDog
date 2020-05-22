@@ -594,7 +594,7 @@ export default class Level1Scene extends Phaser.Scene {
                 return;
             }
 
-            if (this.player.y > 700){
+            if (this.player.y > 800){
                 this.triggerGameOver("You fell to your death :(");
                 this.scene.pause();
                 return;
