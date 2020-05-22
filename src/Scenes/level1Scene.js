@@ -115,7 +115,14 @@ export default class Level1Scene extends Phaser.Scene {
         this.scene.launch("Pause");
         this.scene.launch("Retry");
         this.scene.launch("Win");
+        this.scene.launch("Story");
         this.scene.bringToTop(this);
+        this.do_story();
+    }
+
+    do_story(){
+        this.scene.pause();
+        this.scene.bringToTop(this.scene.get('Story'));
     }
 
     globals_setup(num){
