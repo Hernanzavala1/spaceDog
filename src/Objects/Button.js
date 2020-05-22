@@ -74,7 +74,10 @@ export default class Button extends Phaser.GameObjects.Container {
             this.scene.scene.add('Level6', Level6Scene);
           }
         }
-        
+
+        this.scene.scene.pause("Retry");
+        this.scene.scene.pause("Pause");
+        this.scene.scene.pause("Win");
         console.log("Changing scene");
         this.scene.scene.start(targetScene);
         this.scene.scene.bringToTop(targetScene);

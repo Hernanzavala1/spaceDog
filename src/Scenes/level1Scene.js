@@ -34,21 +34,21 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     preload() {
-        // load images
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
-        this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
-        this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
-        this.load.image('wave', '../../assets/wave.jpg');
-        this.load.image('blue', 'assets/blue.jpg');
-        this.load.image('space', 'assets/space.jpg');
-        this.load.image('bubble', 'assets/bubble.png');
-        this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.audio('bark', 'assets/bark.mp3');
+        // // load images
+        // this.load.image('sky', 'assets/sky.png');
+        // this.load.image('ground', 'assets/platform.png');
+        // this.load.image('star', 'assets/star.png');
+        // this.load.image('bomb', 'assets/bomb.png');
+        // this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
+        // this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
+        // this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
+        // this.load.image('wave', '../../assets/wave.jpg');
+        // this.load.image('blue', 'assets/blue.jpg');
+        // this.load.image('space', 'assets/space.jpg');
+        // this.load.image('bubble', 'assets/bubble.png');
+        // this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
+        // this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
+        // this.load.audio('bark', 'assets/bark.mp3');
         
     }
 
@@ -115,8 +115,11 @@ export default class Level1Scene extends Phaser.Scene {
         this.timer = new Timer(this, 400, 0, 5, 4000);
 
         this.scene.launch("Pause");
+        this.scene.pause("Pause");
         this.scene.launch("Retry");
+        this.scene.pause("Retry");
         this.scene.launch("Win");
+        this.scene.pause("Win");
         this.scene.launch("Story");
         this.scene.bringToTop(this);
         this.do_story();
@@ -276,12 +279,14 @@ export default class Level1Scene extends Phaser.Scene {
         //setup collision between player and portal
         this.physics.add.overlap(this.player, this.portal, function () {
             if (!this.finished) {
+                this.physics.pause();
                 this.player.anims.play('disapear');
                 setTimeout(() => {
+                    this.physics.resume();
                     this.scene.pause();
                     this.scene.resume("Win");
                     this.scene.bringToTop(this.scene.get('Win'));
-                }, 100);
+                }, 1000);
 
 
             }
@@ -330,9 +335,18 @@ export default class Level1Scene extends Phaser.Scene {
                     alien.setBounce(0.0);
                     this.invincible = true;
                     this.timer.pop();
-                    this.player.anims.play('damage');
+                    //this.player.anims.play('damage');
                     console.log("Hit alien number: "+i);
-                    setTimeout(() =>{ this.invincible=false;}, 1000);
+                    var time = 166;
+                    for (var i=0; i<6; i+=2){
+                        setTimeout(()=>{
+                            this.player.setAlpha(0.5);
+                        },i*time);
+                        setTimeout(()=>{
+                            this.player.setAlpha(1);
+                        },(i+1)*time);
+                    }
+                    setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
             }.bind(this));
         }

@@ -8,17 +8,17 @@ export default class LevelScene extends Phaser.Scene {
   }
     preload () {
         // load images
-        this.load.image('levelselect', 'assets/ui/LevelSelect.png');
-        this.load.image('level1', 'assets/ui/Level1Button/Level1Button.png');
-        this.load.image('level1 h', 'assets/ui/Level1Button/Level1Button_Hovered.png');
-        this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
-        this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
+        // this.load.image('levelselect', 'assets/ui/LevelSelect.png');
+        // this.load.image('level1', 'assets/ui/Level1Button/Level1Button.png');
+        // this.load.image('level1 h', 'assets/ui/Level1Button/Level1Button_Hovered.png');
+        // this.load.image('level2', 'assets/ui/Level2Button/Level2Button.png');
+        // this.load.image('level2 h', 'assets/ui/Level2Button/Level2Button_Hovered.png');
+        // this.load.image('ground', 'assets/platform.png');
+        // this.load.image('star', 'assets/star.png');
+        // this.load.image('bomb', 'assets/bomb.png');
         
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 }
-        );
+        // this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 }
+        // );
         
         //controls
         this.esc = this.input.keyboard.addKey('ESC');

@@ -36,27 +36,27 @@ export default class Level2Scene extends Phaser.Scene {
 
     preload() {
         // load images
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
-        this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
-        this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
-        this.load.image('wave', '../../assets/wave.jpg');
-        this.load.image('blue', 'assets/blue.jpg');
-        this.load.image('space', 'assets/space.jpg');
-        this.load.image('bubble', 'assets/bubble.png');
-        this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet('meteor', 'assets/spritesheets/Meteor.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.audio('bark', 'assets/bark.mp3');
+        // this.load.image('sky', 'assets/sky.png');
+        // this.load.image('ground', 'assets/platform.png');
+        // this.load.image('star', 'assets/star.png');
+        // this.load.image('bomb', 'assets/bomb.png');
+        // this.load.spritesheet('spaceDog', 'assets/spritesheets/Dog.png', { frameWidth: 128, frameHeight: 96 });
+        // this.load.spritesheet('spaceDogCrawl', 'assets/spritesheets/DogCrawl.png', { frameWidth: 128, frameHeight: 64 });
+        // this.load.spritesheet('alien', 'assets/spritesheets/Alien.png', { frameWidth: 128, frameHeight: 96 });
+        // this.load.image('wave', '../../assets/wave.jpg');
+        // this.load.image('blue', 'assets/blue.jpg');
+        // this.load.image('space', 'assets/space.jpg');
+        // this.load.image('bubble', 'assets/bubble.png');
+        // this.load.spritesheet('geyser', 'assets/spritesheets/Geyser.png', { frameWidth: 128, frameHeight: 128 });
+        // this.load.spritesheet('portal', 'assets/spritesheets/Portal.png', { frameWidth: 128, frameHeight: 128 });
+        // this.load.spritesheet('meteor', 'assets/spritesheets/Meteor.png', { frameWidth: 64, frameHeight: 64 });
+        // this.load.audio('bark', 'assets/bark.mp3');
     }
 
     create() {
         this.sound.add('bark');
 
-        this.globals_setup(1);
+        this.globals_setup(2);
 
         this.add_keys();
         //pause and unpause

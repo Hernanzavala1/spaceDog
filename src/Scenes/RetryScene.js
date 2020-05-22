@@ -9,12 +9,12 @@ export default class RetryScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('retry', 'assets/ui/RetryButton/RetryButton.png');
-    this.load.image('retryh', 'assets/ui/RetryButton/RetryButton_Hovered.png');
-    this.load.image('resume', 'assets/ui/ResumeButton/ResumeButton.png');
-    this.load.image('resumeh', 'assets/ui/ResumeButton/ResumeButton_Hovered.png');
-    this.load.image('level', 'assets/ui/MainMenuButton/MainMenuButton.png');
-    this.load.image('levelh', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
+    // this.load.image('retry', 'assets/ui/RetryButton/RetryButton.png');
+    // this.load.image('retryh', 'assets/ui/RetryButton/RetryButton_Hovered.png');
+    // this.load.image('resume', 'assets/ui/ResumeButton/ResumeButton.png');
+    // this.load.image('resumeh', 'assets/ui/ResumeButton/ResumeButton_Hovered.png');
+    // this.load.image('level', 'assets/ui/MainMenuButton/MainMenuButton.png');
+    // this.load.image('levelh', 'assets/ui/MainMenuButton/MainMenuButton_Hovered.png');
   }
 
   create () {

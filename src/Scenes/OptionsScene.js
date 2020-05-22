@@ -8,7 +8,7 @@ export default class OptionsScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('optionsbg', 'assets/ui/Help.png');
+    //this.load.image('optionsbg', 'assets/ui/Help.png');
   }
 
   create () {
