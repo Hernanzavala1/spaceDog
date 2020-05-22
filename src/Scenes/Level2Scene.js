@@ -146,7 +146,7 @@ export default class Level2Scene extends Phaser.Scene {
     create_platforms() {
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(1500, 784, 'ground').setScale(7.5, 1).refreshBody();
-        this.platforms.create(1695, 692, 'ground').setScale(0.5, 4.75).refreshBody();
+        this.platforms.create(1684.5, 678, 'ground').setScale(0.6475, 5.625).refreshBody();
         this.platforms.create(2062.5, 433, 'ground').setScale(0.7225, 1.25).refreshBody();
         this.platforms.create(2632, 265, 'ground').setScale(1, 1.25).refreshBody();
         this.platforms.create(2799.5, 723, 'ground').setScale(1.0025, 2.8125).refreshBody();
@@ -356,6 +356,7 @@ export default class Level2Scene extends Phaser.Scene {
                     setTimeout(() =>{ this.invincible=false; this.player.setAlpha(1);}, time*6);
                 }
             }.bind(this));
+
             this.physics.add.collider(alien, this.walls, function(){
                 xSpeed = xSpeed*(-1);
                 console.log(xSpeed);
