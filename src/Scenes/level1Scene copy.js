@@ -58,6 +58,11 @@ export default class Level1Scene extends Phaser.Scene {
         this.globals_setup(1);
 
         this.add_keys();
+        //pause and unpause
+        // this.add.image(400, 300, 'sky');
+        // this.background = this.add.tileSprite(400, 300, config.width, config.height, 'blue');
+        // this.background.setOrigin(0, 0);
+        // this.background.setScrollFactor(0);
         this.background = this.add.tileSprite(0, 0, 800, 600, 'space');
         this.background.setOrigin(0, 0);
         this.background.setScrollFactor(0);
@@ -65,21 +70,27 @@ export default class Level1Scene extends Phaser.Scene {
         this.score_setup();
 
         this.physics.world.bounds.width = 10000;
-        this.physics.world.bounds.height = 1000;
+        this.physics.world.bounds.height = 800;
 
         // BASE
+        // this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
         this.create_platforms();
         this.create_player();
-        // this.create_geysers();
-        // this.create_aliens();
+        this.create_geysers();
+        this.create_aliens();
         this.create_portal();
-        // this.create_asteroids();
+        this.create_asteroids();
 
         this.setup_collisions();
 
+        // this.player.body.onWorldBounds = true;
+        // To simulate less greavity
+        // this.player.body.setGravityY(300);
+
         // Camera-World-Bounds
         // (x origin, y origin, width, height)
-        this.cameras.main.setBounds(0, 0, 10000, 800);
+        this.cameras.main.setBounds(0, 0, 10000, 600);
         this.cameras.main.startFollow(this.player);
         // Background scrolls 1/3 to camera
         this.background.tilePositionX = this.cameras.main.scrollX * .3;
@@ -101,7 +112,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.input.keyboard.on('keyup-' + "DOWN", () => this.changePlayer());
         this.input.keyboard.on('keyup-' + "S", () => this.changePlayer());
 
-        // this.timer = new Timer(this, 400, 0, 5, 4000);
+        this.timer = new Timer(this, 400, 0, 5, 4000);
 
         this.scene.launch("Pause");
         this.scene.launch("Retry");
@@ -142,27 +153,32 @@ export default class Level1Scene extends Phaser.Scene {
 
     create_platforms(){
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(3069/2, 750+25, 'ground').setScale((3069/400), (50/32)).refreshBody();
-        this.platforms.create(1610+857/2, 570+(180/2), 'ground').setScale((857/400), (180/32)).refreshBody();
-        this.platforms.create(2404, 304, 'ground').setScale(1.65, 1.25).refreshBody();
-        this.platforms.create(2067, 277, 'ground').setScale(0.035, 0.4375).refreshBody();
-        this.platforms.create(4395.5, 775, 'ground').setScale(4.5925, 1.5625).refreshBody();
-        this.platforms.create(4252, 183, 'ground').setScale(0.75, 1.25).refreshBody();
-        this.platforms.create(4713.5, 470, 'ground').setScale(1.0025, 1.25).refreshBody();
-        this.platforms.create(7719, 775, 'ground').setScale(8.93, 1.5625).refreshBody();
-        this.platforms.create(6606.5, 400, 'ground').setScale(0.3675, 1.25).refreshBody();
-        this.platforms.create(7176, 705, 'ground').setScale(2.25, 2.8125).refreshBody();
-        this.platforms.create(7280, 249, 'ground').setScale(1.5, 1.25).refreshBody();
-        this.platforms.create(9055, 705, 'ground').setScale(2.25, 2.8125).refreshBody();
+        this.platforms.create(400, 616, 'ground').setScale(3).refreshBody();
+        this.platforms.create(1200, 290, 'ground').setScale(1).refreshBody();
+        this.platforms.create(1800, 370, 'ground').setScale(1).refreshBody();
+
+        this.platforms.create(1200, 568, 'ground').setScale(3).refreshBody();
+        this.platforms.create(1600, 532, 'ground').setScale(3).refreshBody();
+
+        this.platforms.create(3100, 568, 'ground').setScale(3).refreshBody();
+        this.platforms.create(3100, 370, 'ground').setScale(1).refreshBody();//1 
+        this.platforms.create(3600, 260, 'ground').setScale(1).refreshBody();// 3
+        this.platforms.create(3000, 200, 'ground').setScale(1).refreshBody();// 2
+
+        this.platforms.create(4100, 525, 'ground').setScale(3).refreshBody();
+        this.platforms.create(5000, 390, 'ground').setScale(1).refreshBody();
+        this.platforms.create(5900, 525, 'ground').setScale(2, 3).refreshBody();
+        this.platforms.create(6700, 450, 'ground').setScale(3).refreshBody();
     }
 
     create_aliens(){
         //setup aliens
-        // this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
+        this.aliens.push(this.physics.add.sprite(500, 450, 'alien'));
+
     }
 
     create_player(){
-        this.player = this.physics.add.sprite(9100, 450, 'spaceDog');
+        this.player = this.physics.add.sprite(100, 450, 'spaceDog');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
         //animation creation
@@ -248,7 +264,7 @@ export default class Level1Scene extends Phaser.Scene {
             repeat: -1
         });
 
-        this.portal = this.physics.add.sprite(9343, 660, 'portal');
+        this.portal = this.physics.add.sprite(6000, 400, 'portal');
         this.portal.anims.play('Portal');
     }
 
@@ -286,7 +302,7 @@ export default class Level1Scene extends Phaser.Scene {
             this.physics.add.collider(geyser, this.platforms); //collision with platforms
             this.physics.add.overlap(this.player, geyser, function () { //collision with player
                 this.jump_collide();
-                // this.timer.restart();
+                this.timer.restart();
             }.bind(this));
         }
 
@@ -313,7 +329,7 @@ export default class Level1Scene extends Phaser.Scene {
                 else if (this.invincible==false){
                     alien.setBounce(0.0);
                     this.invincible = true;
-                    // this.timer.pop();
+                    this.timer.pop();
                     this.player.anims.play('damage');
                     console.log("Hit alien number: "+i);
                     setTimeout(() =>{ this.invincible=false;}, 1000);
@@ -573,17 +589,17 @@ export default class Level1Scene extends Phaser.Scene {
                 this.scene.pause();
                 return;
             }
-            // if (this.timer.expired){
-            //     this.triggerGameOver("You ran out of air!");
-            //     this.scene.pause();
-            //     return;
-            // }
+            if (this.timer.expired){
+                this.triggerGameOver("You ran out of air!");
+                this.scene.pause();
+                return;
+            }
 
-            // if (this.player.y > 700){
-            //     this.triggerGameOver("You fell to your death :(");
-            //     this.scene.pause();
-            //     return;
-            // }
+            if (this.player.y > 700){
+                this.triggerGameOver("You fell to your death :(");
+                this.scene.pause();
+                return;
+            }
 
         }
     };
